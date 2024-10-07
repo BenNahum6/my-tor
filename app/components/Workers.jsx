@@ -45,7 +45,7 @@ const workers = [
             <div className="flex-1 flex flex-col items-center text-center">
               <h1 className="text-4xl font-bold mb-4">{worker.name}</h1>
               <p className="py-6 mb-4">{worker.description}</p>
-              <Link href="./slug" className="hover:underline">
+              <Link href={`/pages/${worker.name}`} className="hover:underline">
                 <button className="btn btn-primary">Get Started</button>
               </Link>
             </div>

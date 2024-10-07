@@ -1,26 +1,17 @@
-'use client';
+// Navbar.js
 
-import Link from 'next/link';
-import { useCallback } from 'react';
+import ScrollToTop from "./scrollToTop ";
 
+//TODO put in DB
 const role = 'Brothers';
-let names = ['Bibi','Itamar', 'Kahana', 'Michael'];
+const names = ['Bibi', 'Itamar', 'Kahana', 'Michael'];
 
 export default function Navbar() {
-  const scrollToTop = useCallback(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  }, []);
-
   return (
     <div className="fixed top-0 left-0 w-full bg-base-100 z-50">
       <div className="navbar flex justify-between items-center px-4 py-2">
         <div className="flex-1">
-          <Link href="../" className="btn btn-ghost text-xl" onClick={scrollToTop}>
-            MyAppointment
-          </Link>
+          <ScrollToTop />
         </div>
         <div className="flex-none relative">
           <ul className="menu menu-horizontal px-1">
@@ -30,9 +21,9 @@ export default function Navbar() {
                 <ul className="absolute bg-base-100 rounded-t-none p-2 mt-1 shadow-lg">
                   {names.map((name) => (
                     <li key={name}>
-                      <Link href={`./${name}`} className="hover:underline">
-                      {name}
-                    </Link>
+                      <a href={`/pages/${name}`} className="hover:underline">
+                        {name}
+                      </a>
                     </li>
                   ))}
                 </ul>
