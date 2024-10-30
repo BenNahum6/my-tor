@@ -1,27 +1,34 @@
-const data = {
-    name: 'Ben',
-    email: 'bennahum6@gmail.com'
-}
+// קומפוננטה נסיונית
+// // app/new-user/page.js
 
-export default function newUser(){
-    async function addNewUser(){
-        
-        console.log('page ****************');
-        const respons = await fetch('/api/new-user',{
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+// "use client"; // כדי לוודא שהקומפוננטה רצה בצד הלקוח
 
-        const resdata = await respons.json();
-        console.log(resdata);
-    }
-    
-    addNewUser();
-    return(
-        
-        <h1 className="text-red-500">Helooooooooooooooooo</h1>
-    )
-}
+// import { useEffect } from "react";
+
+// async function fetchUsers() {
+//   try {
+//     const response = await fetch("/api/new_user", { 
+//       method: 'GET',
+//     });
+
+//     if (!response.ok) {
+//     //   throw new Error('Network response was not ok');
+//     }
+
+//     const users = await response.json();
+//     console.log(users);
+//   } catch (error) {
+//     console.error('Error:', error);
+//   }
+// }
+
+// export default function NewUser() {
+//   // הפעלת הפונקציה בתוך useEffect
+//   useEffect(() => {
+//     fetchUsers();
+//   }, []); // הרצה רק פעם אחת בעת טעינת הקומפוננטה
+
+//   return (
+//     <h1 className="text-red-500">Helooooooooooooooooo</h1>
+//   );
+// }

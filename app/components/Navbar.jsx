@@ -1,5 +1,3 @@
-// Navbar.js
-
 import ScrollToTop from "./scrollToTop ";
 
 //TODO put in DB

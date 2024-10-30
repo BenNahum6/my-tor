@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import GetEvailebelTor from "@/app/components/GetEvailebelTor";
 
 function Calendar() {
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [selectedDate, setSelectedDate] = useState(null);
 
   const getDaysInMonth = (month, year) => {
@@ -16,10 +17,12 @@ function Calendar() {
     const daysInMonth = getDaysInMonth(month, year);
     const firstDayOfMonth = new Date(year, month, 1).getDay();
 
+    // הוספת ערכים ריקים לימים הריקים בתחילת החודש
     for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(null);
+      days.push('empty');
     }
 
+    // הוספת הימים האמיתיים של החודש
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(day);
     }
@@ -29,7 +32,7 @@ function Calendar() {
 
   const handleDayClick = (day) => {
     if (day && !isPastDate(day)) {
-      setSelectedDate(day);
+      setSelectedDate(day); // עדכן את התאריך שנבחר
     }
   };
 
@@ -59,7 +62,6 @@ function Calendar() {
     const month = currentMonth;
     const selectedDate = new Date(year, month, day);
     
-    // בודק אם התאריך הוא לפני היום
     return selectedDate < today.setHours(0, 0, 0, 0);
   };
 
@@ -94,22 +96,27 @@ function Calendar() {
           <div
             key={index}
             className={`text-center py-2 rounded-lg cursor-pointer ${
-              day === selectedDate
-                ? 'bg-yellow-300 font-bold dark:bg-yellow-600 dark:text-black' 
-                : (isToday(day) && selectedDate === null) 
+              day === 'empty'
+                ? 'bg-transparent cursor-default' // ימים ריקים לא ניתנים ללחיצה ולא מודגשים
+                : day === selectedDate
                 ? 'bg-yellow-300 font-bold dark:bg-yellow-600 dark:text-black'
-                : (day === null) 
-                ? ''
-                : isPastDate(day) 
-                ? 'bg-gray-300 dark:bg-gray-700 cursor-not-allowed' 
-                : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700' 
+                : isToday(day) && selectedDate === null
+                ? 'bg-yellow-300 font-bold dark:bg-yellow-600 dark:text-black'
+                : isPastDate(day)
+                ? 'bg-gray-300 dark:bg-gray-700 cursor-not-allowed'
+                : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
-            onClick={() => handleDayClick(day)}
+            onClick={() => day !== 'empty' && handleDayClick(day)} // התעלמות מלחיצה על ימים ריקים
           >
-            {day !== null ? day : ''}
+            {day !== 'empty' ? day : ''}
           </div>
         ))}
       </div>
+
+      {/* After selecting a date, a GET request will be made */}
+      {selectedDate && (
+        <GetEvailebelTor year={currentYear} month={currentMonth} day={selectedDate} />
+      )}
     </div>
   );
 }
