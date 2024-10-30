@@ -97,7 +97,7 @@ function Calendar() {
             key={index}
             className={`text-center py-2 rounded-lg cursor-pointer ${
               day === 'empty'
-                ? 'bg-transparent cursor-default' // ימים ריקים לא ניתנים ללחיצה ולא מודגשים
+                ? 'bg-transparent cursor-default' // Blank days are not clickable or highlighted
                 : day === selectedDate
                 ? 'bg-yellow-300 font-bold dark:bg-yellow-600 dark:text-black'
                 : isToday(day) && selectedDate === null
@@ -106,7 +106,7 @@ function Calendar() {
                 ? 'bg-gray-300 dark:bg-gray-700 cursor-not-allowed'
                 : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
-            onClick={() => day !== 'empty' && handleDayClick(day)} // התעלמות מלחיצה על ימים ריקים
+            onClick={() => day !== 'empty' && handleDayClick(day)} // Ignores clicking past dates
           >
             {day !== 'empty' ? day : ''}
           </div>
