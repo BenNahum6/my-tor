@@ -2,11 +2,12 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link'; // Import Link from Next.js
-import fetchAppointments from '../lib/fetchAppointments'
+import addAppointment from '../lib/addAppointment'
 export default function ScrollToTop() {
   const linkRef = useRef(null);
 
   useEffect(() => {
+    addAppointment();
     const handleClick = (event) => {
       event.preventDefault(); // Prevent default link behavior
       window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll to top
