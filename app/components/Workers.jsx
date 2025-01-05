@@ -40,7 +40,6 @@ const workers = [
               src={worker.image}
               alt={worker.name}
               className="w-56 h-64 object-cover rounded-lg shadow-2xl flex-shrink-0"
-              property
             />
             <div className="flex-1 flex flex-col items-center text-center">
               <h1 className="text-4xl font-bold mb-4">{worker.name}</h1>

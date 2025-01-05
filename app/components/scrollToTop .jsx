@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link'; // Import Link from Next.js
-
+import fetchAppointments from '../lib/fetchAppointments'
 export default function ScrollToTop() {
   const linkRef = useRef(null);
 
@@ -19,9 +19,12 @@ export default function ScrollToTop() {
     return () => link?.removeEventListener('click', handleClick);
   }, []);
 
+
   return (
-    <Link href="/" ref={linkRef} className="btn btn-ghost text-xl">
-      MyAppointment
-    </Link>
+      <div>
+        <Link href="/" ref={linkRef} className="btn btn-ghost text-xl">
+          MyAppointment
+        </Link>
+      </div>
   );
 }
