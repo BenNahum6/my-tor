@@ -1,9 +1,9 @@
 import { supabase } from './supabase';
 
-const addAppointment = async () => {
+export const addAppointment = async () => {
     const { data, error } = await supabase
-        .from('calendar') // שם הטבלה
-        .insert([newAppointment]); // נתוני הפגישה להוספה
+        .from('calendar') // Table name
+        .insert([newAppointment]);
 
     if (error) {
         console.error('Error adding appointment:', error);
@@ -12,13 +12,10 @@ const addAppointment = async () => {
     }
 };
 
-// קריאה לדוגמה לפונקציה
 const newAppointment = {
     firstName: 'shay',
     lastName: 'lip',
-    phoneNumber: '0547654321',
+    phoneNumber: '05',
     date: '2025-01-10',
     time: '14:30'
 };
-
-addAppointment();
