@@ -1,13 +1,15 @@
 import { supabase } from './supabase';
 
-export const fetchAppointments = async () => {
+const fetchAppointments = async () => {
     const { data, error } = await supabase
         .from('calendar')
         .select('*');
 
     if (error) {
-        console.error('Error fetching appointments:', error);
+        console.error('Error fetching generate-schedule:', error);
     } else {
         console.log('Appointments:', data);
     }
 };
+
+fetchAppointments();
