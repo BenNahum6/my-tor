@@ -1,8 +1,0 @@
-{
-  "version": 2,
-  "functions": {
-    "app/api/generate-schedule/route.js": {
-      "maxDuration": 100
-    }
-  }
-}
