@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "functions": {
+    "api/generate-schedule.js": {
+      "maxDuration": 100  // Increased the timeout to 100s
+    }
+  }
+}
