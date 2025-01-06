@@ -5,7 +5,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// פונקציה לבדיקת חיבור לדאטה בייס
+/*Check if the database connection exists*/
 const fetchAppointments = async () => {
     try {
         const { data, error } = await supabase
@@ -13,12 +13,12 @@ const fetchAppointments = async () => {
             .select('*');
 
         if (error) {
-            console.error('Error fetching appointments:', error.message); // הצגת הודעת השגיאה עם פרטים
+            console.error('Error fetching generate-schedule:', error.message); // Show the error message with details
             return;
         }
         console.log('Appointments fetched successfully:', data);
     } catch (err) {
-        console.error('Unexpected error:', err.message); // טיפול בשגיאות לא צפויות
+        console.error('Unexpected error:', err.message); // Handling unexpected errors
     }
 };
 

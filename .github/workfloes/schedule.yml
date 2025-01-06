@@ -1,0 +1,17 @@
+name: Daily Task to Update Appointments, date and time.
+
+on:
+  schedule:
+    - cron: '1 0 * * *'  # # Run every day at 12:01 AM UTC
+  workflow_dispatch:  # Manual run by button
+
+jobs:
+  update-appointments:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2 # Retrieves the repository code
+
+      - name: Run update appointments task
+        run: |
+          curl -X POST https://my-tor.vercel.app/api/generate-schedule/rout.js
