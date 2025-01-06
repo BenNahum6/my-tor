@@ -1,4 +1,4 @@
-import { supabase } from './supabase'; // וודא שהייבוא נכון
+import { supabase } from '../../lib/supabase'; // וודא שהייבוא נכון
 
 // פונקציה ליצירת תאריכים ושעות
 const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) => {
