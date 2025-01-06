@@ -28,7 +28,6 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
     return appointments;
 };
 
-/*Checks if the rows exist before adding them to the database*/
 const checkIfAppointmentExists = async (date) => {
     const { data, error } = await supabase
         .from('calendar') // Table name
@@ -43,7 +42,6 @@ const checkIfAppointmentExists = async (date) => {
     return data.length > 0; // אם קיימת רשומה עם תאריך ושעה זהים
 };
 
-/*Deletes all past rows from the data table.*/
 const deletePreviousDayAppointments = async () => {
     const today = new Date();
     today.setDate(today.getDate() - 1); // קבע את התאריך של אתמול
@@ -62,14 +60,12 @@ const deletePreviousDayAppointments = async () => {
     }
 };
 
-// פונקציה להוספת התורים למסד הנתונים
 const insertAppointmentsToDb = async (appointments) => {
     try {
         await deletePreviousDayAppointments();
 
         // Add new appointments
         for (const appointment of appointments) {
-
             const exists = await checkIfAppointmentExists(appointment.date);
 
             if (exists) {
@@ -79,12 +75,10 @@ const insertAppointmentsToDb = async (appointments) => {
 
             const { data, error } = await supabase
                 .from('calendar')
-                .upsert([
-                    {
-                        date: appointment.date,
-                        time: appointment.time
-                    }
-                ]);
+                .upsert([{
+                    date: appointment.date,
+                    time: appointment.time
+                }]);
 
             if (error) {
                 console.error('Error inserting appointment:', error.message);
@@ -97,8 +91,14 @@ const insertAppointmentsToDb = async (appointments) => {
     }
 };
 
-/*Creating available appointments a week in advance*/
-const appointments = generateDatesAndTimes(7, 9, 21, 30); // 7 days ahead, 9:00 AM to 9:00 PM, every 30 minutes
+// פעולה POST (או כל פעולה אחרת שתבחר)
+export async function POST(req) {
+    try {
+        const appointments = generateDatesAndTimes(7, 9, 21, 30); // 7 days ahead, 9:00 AM to 9:00 PM, every 30 minutes
 
-/*Adding appointments to the database*/
-insertAppointmentsToDb(appointments);
+        await insertAppointmentsToDb(appointments); // הוספת תורים למסד הנתונים
+        return new Response('Appointments generated and inserted successfully.', { status: 200 });
+    } catch (error) {
+        return new Response('Error generating appointments: ' + error.message, { status: 500 });
+    }
+}
