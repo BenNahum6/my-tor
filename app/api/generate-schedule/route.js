@@ -91,11 +91,9 @@ const insertAppointmentsToDb = async (appointments) => {
     }
 };
 
-// פעולה POST (או כל פעולה אחרת שתבחר)
 export async function POST(req) {
     try {
-        const appointments = generateDatesAndTimes(7, 9, 21, 30); // 7 days ahead, 9:00 AM to 9:00 PM, every 30 minutes
-
+        const appointments = generateDatesAndTimes(7, 9, 21, 30); // יצירת תורים
         await insertAppointmentsToDb(appointments); // הוספת תורים למסד הנתונים
         return new Response('Appointments generated and inserted successfully.', { status: 200 });
     } catch (error) {
