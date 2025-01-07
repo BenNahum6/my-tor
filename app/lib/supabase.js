@@ -23,3 +23,9 @@ const fetchAppointments = async () => {
 };
 
 fetchAppointments();
+
+
+
+
+
+

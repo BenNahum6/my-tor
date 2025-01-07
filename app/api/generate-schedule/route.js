@@ -29,17 +29,23 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
 };
 
 const checkIfAppointmentExists = async (date) => {
-    const { data, error } = await supabase
-        .from('calendar') // Table name
-        .select('*') // Select all fields
-        .eq('date', date) // Search by date
+    try {
+        const { data, error } = await supabase
+            .from('calendar')
+            .select('*')
+            .eq('date', date);  // חפש תור על פי התאריך
 
-    if (error) {
-        console.error('Error checking existing appointment:', error.message);
+        if (error) {
+            console.error('Error checking if appointment exists:', error.message);
+            return false;
+        }
+
+        console.log(`Appointments found for ${date}:`, data);
+        return data.length > 0; // אם מצא תור עם אותו תאריך
+    } catch (err) {
+        console.error('Unexpected error while checking appointment existence:', err.message);
         return false;
     }
-
-    return data.length > 0; // אם קיימת רשומה עם תאריך ושעה זהים
 };
 
 const deletePreviousDayAppointments = async () => {
@@ -64,6 +70,9 @@ const insertAppointmentsToDb = async (appointments) => {
     try {
         await deletePreviousDayAppointments();
 
+        // הדפסת הנתונים שנכנסים למסד הנתונים
+        console.log('Appointments to insert:', appointments);
+
         // Add new appointments
         for (const appointment of appointments) {
             const exists = await checkIfAppointmentExists(appointment.date);
@@ -84,6 +93,19 @@ const insertAppointmentsToDb = async (appointments) => {
                 console.error('Error inserting appointment:', error.message);
             } else {
                 console.log('Appointment added successfully:', data);
+
+                // בדיקה אם התור אכן הוסף
+                const { data: fetchedData, error: fetchError } = await supabase
+                    .from('calendar')
+                    .select('*')
+                    .eq('date', appointment.date)
+                    .eq('time', appointment.time);
+
+                if (fetchError) {
+                    console.error('Error fetching added appointment:', fetchError.message);
+                } else {
+                    console.log('Fetched added appointment:', fetchedData);
+                }
             }
         }
     } catch (err) {
