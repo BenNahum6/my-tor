@@ -86,7 +86,8 @@ const insertAppointmentsToDb = async (appointments) => {
                 .from('calendar')
                 .insert([{
                     date: appointment.date,
-                    time: appointment.time
+                    time: appointment.time,
+                    available: true
                 }]);
 
             if (error) {
