@@ -1,16 +1,16 @@
-import { supabase } from '../../lib/supabase'; // וודא שהייבוא נכון
+import { supabase } from '../../lib/supabase';
 
-// פונקציה ליצירת תאריכים ושעות
+// Creating dates and times
 const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) => {
     const appointments = [];
     const now = new Date();
 
-    // יצירת התאריכים והזמנים לשבוע הבא
+    // Creating the dates and times for week
     for (let i = 0; i < daysAhead; i++) {
         const day = new Date(now);
-        day.setDate(now.getDate() + i); // הוספת יום אחר
+        day.setDate(now.getDate() + i); // Adding another day
 
-        // יצירת שעות בתוך כל יום
+        // Creating hours within each day
         for (let hour = startHour; hour < endHour; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
@@ -18,8 +18,8 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
                 time.setMinutes(minute);
 
                 appointments.push({
-                    date: time.toISOString().split('T')[0], // התאריך בלבד
-                    time: time.toISOString().split('T')[1].substring(0, 5), // הזמן בלבד (שעה ודקה)
+                    date: time.toISOString().split('T')[0],
+                    time: time.toISOString().split('T')[1].substring(0, 5),
                 });
             }
         }
@@ -28,7 +28,7 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
     return appointments;
 };
 
-// פונקציה לבדיקת אם התור כבר קיים
+/*Checking if the appointment already exists*/
 const checkIfAppointmentExists = async (date, time) => {
     try {
         const { data, error } = await supabase
@@ -52,14 +52,14 @@ const checkIfAppointmentExists = async (date, time) => {
 
 const deletePreviousDayAppointments = async () => {
     const today = new Date();
-    today.setDate(today.getDate() - 1); // קבע את התאריך של אתמול
+    today.setDate(today.getDate() - 1); // Set yesterday date
 
-    const yesterday = today.toISOString().split('T')[0]; // התאריך של אתמול
+    const yesterday = today.toISOString().split('T')[0];
 
     const { data, error } = await supabase
-        .from('calendar') // שם הטבלה
-        .delete() // פעולה של מחיקה
-        .lt('date', yesterday); // מחוק את כל התורים שהתאריך שלהם לפני אתמול
+        .from('calendar')
+        .delete() // Delete operation
+        .lt('date', yesterday); // Deletes all appointments whose date is before yesterday
 
     if (error) {
         console.error('Error deleting previous day appointments:', error.message);
@@ -72,9 +72,6 @@ const insertAppointmentsToDb = async (appointments) => {
     try {
         await deletePreviousDayAppointments();
 
-        // הדפסת הנתונים שנכנסים למסד הנתונים
-        console.log('Appointments to insert:', appointments);
-
         // Add new appointments
         for (const appointment of appointments) {
             const exists = await checkIfAppointmentExists(appointment.date, appointment.time);
@@ -84,7 +81,7 @@ const insertAppointmentsToDb = async (appointments) => {
                 continue;
             }
 
-            // אם התור לא קיים, נוסיף אותו למסד הנתונים
+            // If the appointment does not exist, we will add it to the database
             const { data, error } = await supabase
                 .from('calendar')
                 .insert([{
@@ -97,7 +94,7 @@ const insertAppointmentsToDb = async (appointments) => {
             } else {
                 console.log('Appointment added successfully:', data);
 
-                // בדיקה אם התור אכן הוסף
+                // Checking if the appointment was actually added
                 const { data: fetchedData, error: fetchError } = await supabase
                     .from('calendar')
                     .select('*')
@@ -118,8 +115,8 @@ const insertAppointmentsToDb = async (appointments) => {
 
 export async function POST(req) {
     try {
-        const appointments = generateDatesAndTimes(7, 9, 21, 30); // יצירת תורים
-        await insertAppointmentsToDb(appointments); // הוספת תורים למסד הנתונים
+        const appointments = generateDatesAndTimes(7, 9, 21, 30); // Create an appointment
+        await insertAppointmentsToDb(appointments); // Adding an appointment to the database
         return new Response('Appointments generated and inserted successfully.', { status: 200 });
     } catch (error) {
         return new Response('Error generating appointments: ' + error.message, { status: 500 });
