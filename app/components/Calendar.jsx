@@ -1,11 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 
 function Calendar() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [selectedDate, setSelectedDate] = useState(null);
+  const router = useRouter();
+  const params = useParams();
+  const slug = params.slug; // Extracting the slug from the URL
 
   const getDaysInMonth = (month, year) => {
     return new Date(year, month + 1, 0).getDate();
@@ -30,9 +34,14 @@ function Calendar() {
   };
 
   const handleDayClick = async (day) => {
-
     if (day && !isPastDate(day)) {
       setSelectedDate(day);
+
+      // בדיקה שה-slug קיים
+      if (!slug) {
+        console.error('No slug found in URL');
+        return;
+      }
 
       const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
@@ -52,11 +61,15 @@ function Calendar() {
         const data = await response.json();
         console.log('פגישות זמינות עבור', dateString, ':', data);
 
+        // Navigation with the dynamic slug
+        router.push(`/pages/${slug}/available-appointments`);
+
       } catch (error) {
         console.error('שגיאה בשליחת הבקשה:', error);
       }
     }
   };
+
   const handleNextMonth = () => {
     if (currentMonth === 11) {
       setCurrentMonth(0);
