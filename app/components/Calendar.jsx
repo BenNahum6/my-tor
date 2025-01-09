@@ -20,12 +20,12 @@ function Calendar() {
     const daysInMonth = getDaysInMonth(month, year);
     const firstDayOfMonth = new Date(year, month, 1).getDay();
 
-    // הוספת ערכים ריקים לימים הריקים בתחילת החודש
+    // Adding blank values to empty days at the beginning of the month
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push('empty');
     }
 
-    // הוספת הימים האמיתיים של החודש
+    // Adding the actual days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(day);
     }
@@ -37,7 +37,7 @@ function Calendar() {
     if (day && !isPastDate(day)) {
       setSelectedDate(day);
 
-      // בדיקה שה-slug קיים
+      // Checking that the slug exists
       if (!slug) {
         console.error('No slug found in URL');
         return;
@@ -59,13 +59,13 @@ function Calendar() {
         }
 
         const data = await response.json();
-        console.log('פגישות זמינות עבור', dateString, ':', data);
+        console.log('Appointments are available for', dateString, ':', data);
 
         // Navigation with the dynamic slug
         router.push(`/pages/${slug}/available-appointments`);
 
       } catch (error) {
-        console.error('שגיאה בשליחת הבקשה:', error);
+        console.error('Error sending request:', error);
       }
     }
   };

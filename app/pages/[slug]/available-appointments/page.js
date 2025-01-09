@@ -1,4 +1,4 @@
-// app/[slug]/available-appointments/page.js
+// app/[slug]/ד/page.js
 import Navbar from "@/app/components/Navbar";
 
 export default function showAppointments() {
