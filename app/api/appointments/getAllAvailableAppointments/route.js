@@ -3,27 +3,27 @@ import { supabase } from '@/app/lib/supabase';
 
 export async function POST(req) {
         try {
-                // קבלת התאריך שנשלח בבקשה
+                // Accepting the date sent on request
                 const { date } = await req.json();
                 console.log('sent date:', date);
 
-                // קריאה ל-Supabase כדי למצוא את הפגישות הזמינות בתאריך הזה
+                // Calling Supabase to find available appointments on this date
                 const { data, error } = await supabase
-                    .from('calendar') // שם הטבלה שלך
-                    .select('date, available') // בחר את השדות שאתה צריך
-                    .eq('date', date) // חפש את הפגישות בתאריך הזה
-                    .eq('available', true); // הפגישות שזמינות
+                    .from('calendar')
+                    .select('date, available') // Select the fields you need.
+                    .eq('date', date) // Search for meetings on this date
+                    .eq('available', true); // Available meetings
 
-                // אם יש שגיאה בקריאה ל-Supabase
+                // If there is an error calling Supabase
                 if (error) {
-                        console.error('שגיאה בהבאת פגישות זמין:', error);
+                        console.error('Error fetching available appointments:', error);
                         return NextResponse.json(
-                            { success: false, error: 'שגיאה בהבאת פגישות' },
+                            { success: false, error: 'Error fetching meetings' },
                             { status: 500 }
                         );
                 }
 
-                // אם נמצאו פגישות זמינות, החזר את הנתונים
+                // If available appointments are found, return the data.
                 if (data && data.length > 0) {
                         return NextResponse.json({
                                 success: true,
@@ -34,16 +34,16 @@ export async function POST(req) {
                         });
                 }
 
-                // אם אין פגישות זמינות בתאריך זה
+                // If there are no appointments available on this date
                 return NextResponse.json({
                         success: true,
-                        appointments: [], // אין פגישות זמינות
+                        appointments: [], // No appointments available
                 });
 
         } catch (error) {
-                console.error('שגיאה ב-API route:', error);
+                console.error('API route error:', error);
                 return NextResponse.json(
-                    { success: false, error: 'שגיאה בעיבוד הבקשה' },
+                    { success: false, error: 'Error processing the request' },
                     { status: 500 }
                 );
         }
