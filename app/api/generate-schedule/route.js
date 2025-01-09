@@ -59,7 +59,7 @@ const deletePreviousDayAppointments = async () => {
     const { data, error } = await supabase
         .from('calendar')
         .delete() // Delete operation
-        .lt('date', yesterday); // Deletes all appointments whose date is before yesterday
+        .eq('date', yesterday); // Deletes all appointments whose date equals yesterday
 
     if (error) {
         console.error('Error deleting previous day appointments:', error.message);

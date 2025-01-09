@@ -1,11 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 
 function Calendar() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [selectedDate, setSelectedDate] = useState(null);
+  const router = useRouter();
+  const params = useParams();
+  const slug = params.slug; // Extracting the slug from the URL
 
   const getDaysInMonth = (month, year) => {
     return new Date(year, month + 1, 0).getDate();
@@ -16,12 +20,12 @@ function Calendar() {
     const daysInMonth = getDaysInMonth(month, year);
     const firstDayOfMonth = new Date(year, month, 1).getDay();
 
-    // הוספת ערכים ריקים לימים הריקים בתחילת החודש
+    // Adding blank values to empty days at the beginning of the month
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push('empty');
     }
 
-    // הוספת הימים האמיתיים של החודש
+    // Adding the actual days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(day);
     }
@@ -30,9 +34,14 @@ function Calendar() {
   };
 
   const handleDayClick = async (day) => {
-
     if (day && !isPastDate(day)) {
       setSelectedDate(day);
+
+      // Checking that the slug exists
+      if (!slug) {
+        console.error('No slug found in URL');
+        return;
+      }
 
       const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
@@ -50,13 +59,17 @@ function Calendar() {
         }
 
         const data = await response.json();
-        console.log('פגישות זמינות עבור', dateString, ':', data);
+        console.log('Appointments are available for', dateString, ':', data);
+
+        // Navigation with the dynamic slug
+        router.push(`/pages/${slug}/available-appointments`);
 
       } catch (error) {
-        console.error('שגיאה בשליחת הבקשה:', error);
+        console.error('Error sending request:', error);
       }
     }
   };
+
   const handleNextMonth = () => {
     if (currentMonth === 11) {
       setCurrentMonth(0);
