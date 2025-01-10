@@ -248,3 +248,5 @@ export async function POST(req) {
         return new Response('Error generating appointments: ' + error.message, { status: 500 });
     }
 }
+
+
