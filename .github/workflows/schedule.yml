@@ -12,6 +12,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Set timezone to Israel
+        run: |
+          sudo timedatectl set-timezone Asia/Jerusalem  
+
       - name: Run update appointments task
         run: |
           curl -X POST https://my-tor.vercel.app/api/generate-schedule
