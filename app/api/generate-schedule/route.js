@@ -52,14 +52,14 @@ const checkIfAppointmentExists = async (date, time) => {
 
 const deletePreviousDayAppointments = async () => {
     const today = new Date();
-    today.setDate(today.getDate() - 1); // Set yesterday date
+    today.setDate(today.getDate() - 1); // Set yesterday [date]
 
     const yesterday = today.toISOString().split('T')[0];
 
     const { data, error } = await supabase
         .from('calendar')
         .delete() // Delete operation
-        .eq('date', yesterday); // Deletes all appointments whose date equals yesterday
+        .eq('date', yesterday); // Deletes all appointments whose [date] equals yesterday
 
     if (error) {
         console.error('Error deleting previous day appointments:', error.message);

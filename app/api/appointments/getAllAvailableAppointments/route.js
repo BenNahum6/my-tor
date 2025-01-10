@@ -3,15 +3,15 @@ import { supabase } from '@/app/lib/supabase';
 
 export async function POST(req) {
         try {
-                // Accepting the date sent on request
+                // Accepting the [date] sent on request
                 const { date } = await req.json();
-                console.log('sent date:', date);
+                console.log('sent [date]:', date);
 
-                // Calling Supabase to find available appointments on this date
+                // Calling Supabase to find available appointments on this [date]
                 const { data, error } = await supabase
                     .from('calendar')
-                    .select('date, available') // Select the fields you need.
-                    .eq('date', date) // Search for meetings on this date
+                    .select('[date], available') // Select the fields you need.
+                    .eq('date', date) // Search for meetings on this [date]
                     .eq('available', true); // Available meetings
 
                 // If there is an error calling Supabase
@@ -34,7 +34,7 @@ export async function POST(req) {
                         });
                 }
 
-                // If there are no appointments available on this date
+                // If there are no appointments available on this [date]
                 return NextResponse.json({
                         success: true,
                         appointments: [], // No appointments available

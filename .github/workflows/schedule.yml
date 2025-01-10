@@ -1,4 +1,4 @@
-name: Daily Task to Update Appointments, date and time
+name: Daily Task to Update Appointments, [date] and time
 
 on:
   schedule:
