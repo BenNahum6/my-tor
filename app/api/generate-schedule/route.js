@@ -1,16 +1,16 @@
 import { supabase } from '../../lib/supabase';
 
-// Creating dates and times
+// יצירת תאריכים ושעות
 const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) => {
     const appointments = [];
     const now = new Date();
 
-    // Creating the dates and times for week
+    // יצירת התאריכים והשעות לשבוע הקרוב
     for (let i = 0; i < daysAhead; i++) {
         const day = new Date(now);
-        day.setDate(now.getDate() + i); // Adding another day
+        day.setDate(now.getDate() + i); // הוספת יום נוסף
 
-        // Creating hours within each day
+        // יצירת שעות בתוך כל יום
         for (let hour = startHour; hour < endHour; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
@@ -18,8 +18,8 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
                 time.setMinutes(minute);
 
                 appointments.push({
-                    date: time.toISOString().split('T')[0],
-                    time: time.toISOString().split('T')[1].substring(0, 5),
+                    timestamp: time.toISOString(), // שמירה ב-timestamptz
+                    available: true
                 });
             }
         }
@@ -28,22 +28,21 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
     return appointments;
 };
 
-/*Checking if the appointment already exists*/
-const checkIfAppointmentExists = async (date, time) => {
+/* בדיקה אם יש תור שכבר קיים */
+const checkIfAppointmentExists = async (timestamp) => {
     try {
         const { data, error } = await supabase
             .from('calendar')
             .select('*')
-            .eq('date', date)  // חפש תור על פי התאריך
-            .eq('time', time); // וחפש גם לפי הזמן
+            .eq('timestamp', timestamp);  // חיפוש על פי הזמן המלא (כולל אזור הזמן)
 
         if (error) {
             console.error('Error checking if appointment exists:', error.message);
             return false;
         }
 
-        console.log(`Appointments found for ${date} at ${time}:`, data);
-        return data.length > 0; // אם מצא תור עם אותו תאריך ושעה
+        console.log(`Appointments found for ${timestamp}:`, data);
+        return data.length > 0; // אם מצא תור עם אותו זמן
     } catch (err) {
         console.error('Unexpected error while checking appointment existence:', err.message);
         return false;
@@ -52,14 +51,14 @@ const checkIfAppointmentExists = async (date, time) => {
 
 const deletePreviousDayAppointments = async () => {
     const today = new Date();
-    today.setDate(today.getDate() - 1); // Set yesterday [date]
+    today.setDate(today.getDate() - 1); // הגדרת אתמול
 
     const yesterday = today.toISOString().split('T')[0];
 
     const { data, error } = await supabase
         .from('calendar')
-        .delete() // Delete operation
-        .eq('date', yesterday); // Deletes all appointments whose [date] equals yesterday
+        .delete() // פעולה של מחיקה
+        .eq('timestamp', yesterday); // מחיקת תורים שזמנם ביום של אתמול
 
     if (error) {
         console.error('Error deleting previous day appointments:', error.message);
@@ -72,22 +71,21 @@ const insertAppointmentsToDb = async (appointments) => {
     try {
         await deletePreviousDayAppointments();
 
-        // Add new appointments
+        // הוספת תורים חדשים
         for (const appointment of appointments) {
-            const exists = await checkIfAppointmentExists(appointment.date, appointment.time);
+            const exists = await checkIfAppointmentExists(appointment.timestamp);
 
             if (exists) {
-                console.log(`Appointment already exists for ${appointment.date} at ${appointment.time}`);
+                console.log(`Appointment already exists for ${appointment.timestamp}`);
                 continue;
             }
 
-            // If the appointment does not exist, we will add it to the database
+            // אם התור לא קיים, נוסיף אותו למסד הנתונים
             const { data, error } = await supabase
                 .from('calendar')
                 .insert([{
-                    date: appointment.date,
-                    time: appointment.time,
-                    available: true
+                    timestamp: appointment.timestamp,
+                    available: appointment.available
                 }]);
 
             if (error) {
@@ -95,12 +93,11 @@ const insertAppointmentsToDb = async (appointments) => {
             } else {
                 console.log('Appointment added successfully:', data);
 
-                // Checking if the appointment was actually added
+                // בדיקת האם התור הוסף בהצלחה
                 const { data: fetchedData, error: fetchError } = await supabase
                     .from('calendar')
                     .select('*')
-                    .eq('date', appointment.date)
-                    .eq('time', appointment.time);
+                    .eq('timestamp', appointment.timestamp);
 
                 if (fetchError) {
                     console.error('Error fetching added appointment:', fetchError.message);
@@ -116,8 +113,8 @@ const insertAppointmentsToDb = async (appointments) => {
 
 export async function POST(req) {
     try {
-        const appointments = generateDatesAndTimes(7, 9, 21, 30); // Create an appointment
-        await insertAppointmentsToDb(appointments); // Adding an appointment to the database
+        const appointments = generateDatesAndTimes(7, 9, 21, 30); // יצירת תורים לשבוע
+        await insertAppointmentsToDb(appointments); // הוספת תורים למסד הנתונים
         return new Response('Appointments generated and inserted successfully.', { status: 200 });
     } catch (error) {
         return new Response('Error generating appointments: ' + error.message, { status: 500 });
