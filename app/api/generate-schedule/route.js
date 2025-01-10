@@ -136,7 +136,7 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
         const day = new Date(now);
         day.setDate(now.getDate() + i); // הוספת יום נוסף
 
-        // יצירת שעות בתוך כל יום
+        // Creating hours within each day
         for (let hour = startHour; hour < endHour; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
