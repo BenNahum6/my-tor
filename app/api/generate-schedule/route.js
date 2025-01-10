@@ -160,7 +160,7 @@ const checkIfAppointmentExists = async (dateTime) => {
         const { data, error } = await supabase
             .from('calendar')
             .select('*')
-            .eq('appointment_time', dateTime); // השוואה לתאריך ושעה מלאים כולל אזור זמן
+            .eq('time', dateTime); // השוואה לתאריך ושעה מלאים כולל אזור זמן
 
         if (error) {
             console.error('Error checking if appointment exists:', error.message);
@@ -185,7 +185,7 @@ const deletePreviousDayAppointments = async () => {
     const { data, error } = await supabase
         .from('calendar')
         .delete() // פעולה למחוק
-        .lt('appointment_time', yesterday); // מחיקה של כל התורים שהתאריך שלהם קטן מאתמול
+        .eq('time', yesterday); // מחיקה של כל התורים שהתאריך שלהם קטן מהיום
 
     if (error) {
         console.error('Error deleting previous day appointments:', error.message);
@@ -212,7 +212,7 @@ const insertAppointmentsToDb = async (appointments) => {
             const { data, error } = await supabase
                 .from('calendar')
                 .insert([{
-                    appointment_time: appointment.dateTime, // שדה תאריך ושעה עם אזור זמן
+                    time: appointment.dateTime, // שדה תאריך ושעה עם אזור זמן
                     available: true
                 }]);
 
@@ -225,7 +225,7 @@ const insertAppointmentsToDb = async (appointments) => {
                 const { data: fetchedData, error: fetchError } = await supabase
                     .from('calendar')
                     .select('*')
-                    .eq('appointment_time', appointment.dateTime);
+                    .eq('time', appointment.dateTime);
 
                 if (fetchError) {
                     console.error('Error fetching added appointment:', fetchError.message);
@@ -248,5 +248,3 @@ export async function POST(req) {
         return new Response('Error generating appointments: ' + error.message, { status: 500 });
     }
 }
-
-
