@@ -46,28 +46,8 @@ function Calendar() {
       const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
       // Navigation with the dynamic date
-      console.log(`/pages/${slug}/available-appointments/${dateString}`);
       router.push(`/pages/${slug}/available-appointments/${dateString}`);
 
-      // try {
-      //   const response = await fetch('/api/appointments/getAllAvailableAppointments', {
-      //     method: 'POST',
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify({ date: dateString }),
-      //   });
-      //
-      //   if (!response.ok) {
-      //     throw new Error(`HTTP error! status: ${response.status}`);
-      //   }
-      //
-      //   const data = await response.json();
-      //   console.log('Appointments are available for', dateString, ':', data);
-      //
-      // } catch (error) {
-      //   console.error('Error sending request:', error);
-      // }
     }
   };
 

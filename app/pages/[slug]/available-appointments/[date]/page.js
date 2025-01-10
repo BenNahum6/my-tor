@@ -1,10 +1,11 @@
 import Navbar from "@/app/components/Navbar";
+import PresentsAppointments from "@/app/components/PresentsAppointments";
 
 // קומפוננטה שמבצעת קריאת API בצד השרת (בלי `getServerSideProps`)
 const AvailableAppointments = async ({ params }) => {
     const { slug, date } = params;
 
-    // ביצוע קריאת HTTP ל-API בצד השרת
+    // Making an HTTP call to a server-side API
     let appointments = [];
     try {
         const response = await fetch('http://localhost:3000/api/appointments/getAllAvailableAppointments', {
@@ -20,7 +21,7 @@ const AvailableAppointments = async ({ params }) => {
         }
 
         const data = await response.json();
-        appointments = data; // זהו המידע שהתקבל מה-API
+        appointments = data; // The information received from the API
         console.log('Appointments are available for', date, ':', appointments);
     } catch (error) {
         console.error('Error sending request:', error);
@@ -32,7 +33,8 @@ const AvailableAppointments = async ({ params }) => {
             <h1>Available Appointments</h1>
             <h2>Slug: {slug}</h2>
             <h2>Date: {date}</h2>
-
+            <h1>Available Appointments</h1>
+            <PresentsAppointments data={appointments} /> {/* שולח את הנתונים לקומפוננטה */}
         </div>
     );
 };
