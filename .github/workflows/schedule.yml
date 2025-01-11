@@ -2,7 +2,7 @@ name: Daily Task to Update Appointments, [date] and time
 
 on:
   schedule:
-    - cron: '1 0 * * *'  # Run every day at 12:01 AM UTC
+    - cron: '1 22 * * *'  # Run every day at 12:01 Israel time (Winter, UTC+2)
   workflow_dispatch:  # Manual run by button
 
 jobs:
@@ -12,9 +12,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set timezone to Israel
+      - name: Print current Israel time
         run: |
-          sudo timedatectl set-timezone Asia/Jerusalem  
+          node -e "
+          const now = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jerusalem' });
+          console.log('Current Israel Time:', now);
+          "
 
       - name: Run update appointments task
         run: |
