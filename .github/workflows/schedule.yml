@@ -2,7 +2,7 @@ name: Daily Task to Update Appointments
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # Run every day at 12:01 Israel time (Winter, UTC+2)
+    - cron: '1 00 * * *'  # Run every day at 12:01 AM Israel time
   workflow_dispatch:  # Manual run by button
 
 jobs:

@@ -401,19 +401,15 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
         for (let hour = startHour; hour < endHour; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
-                time.setUTCHours(hour); // Set UTC hour explicitly
-                time.setUTCMinutes(minute);
-
-                // Convert time to Israel time zone
-                const israelTime = new Date(time.toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
+                time.setHours(hour); // Set hour for local time (Israel)
 
                 // Create a time string in timetz format (hour:minute:second+timezone)
-                const hours = israelTime.getHours().toString().padStart(2, '0');
-                const minutes = israelTime.getMinutes().toString().padStart(2, '0');
+                const hours = time.getHours().toString().padStart(2, '0');
+                const minutes = time.getMinutes().toString().padStart(2, '0');
                 const timeString = `${hours}:${minutes}:00+02`; // Adding +02 for Israel time zone
 
                 appointments.push({
-                    date: israelTime.toISOString().split('T')[0], // Save the date
+                    date: time.toISOString().split('T')[0], // Save the date in ISO format
                     time: timeString, // Saving time in timetz format
                 });
             }
@@ -447,7 +443,7 @@ const checkIfAppointmentExists = async (date, time) => {
 
 /* Deleting yesterday's appointment */
 const deletePreviousDayAppointments = async () => {
-    const israelTime = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
+    const israelTime = new Date();
     israelTime.setDate(israelTime.getDate() - 1);
 
     const yesterday = israelTime.toISOString().split('T')[0];
@@ -469,7 +465,7 @@ const insertAppointmentsToDb = async (appointments) => {
     try {
         await deletePreviousDayAppointments();
 
-        //Adding new appointments
+        // Adding new appointments
         for (const appointment of appointments) {
             const exists = await checkIfAppointmentExists(appointment.date, appointment.time);
 
