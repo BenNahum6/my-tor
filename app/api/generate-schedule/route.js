@@ -397,11 +397,12 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
         const day = new Date(now);
         day.setDate(now.getDate() + i); // Adding another day
 
-        // Creating hours within each day
+        // Creating hours within each day with fixed intervals of 30 minutes
         for (let hour = startHour; hour < endHour; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
                 time.setHours(hour); // Set hour for local time (Israel)
+                time.setMinutes(minute); // Set minutes to the fixed interval (9:00, 9:30, etc.)
 
                 // Create a time string in timetz format (hour:minute:second+timezone)
                 const hours = time.getHours().toString().padStart(2, '0');
@@ -509,7 +510,7 @@ const insertAppointmentsToDb = async (appointments) => {
 
 export async function POST(req) {
     try {
-        const appointments = generateDatesAndTimes(7, 9, 21, 30); // Creating an appointment for the week
+        const appointments = generateDatesAndTimes(7, 9, 21, 30); // Creating an appointment for the week with 30 min intervals
         await insertAppointmentsToDb(appointments);
         return new Response('Appointments generated and inserted successfully.', { status: 200 });
     } catch (error) {
