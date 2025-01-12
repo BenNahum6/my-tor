@@ -249,6 +249,141 @@
 //     }
 // }
 
+// import { supabase } from '../../lib/supabase';
+//
+// /* Creating dates and times */
+// const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) => {
+//     const appointments = [];
+//     const now = new Date();
+//
+//     // Creating the dates and times for the coming week
+//     for (let i = 0; i < daysAhead; i++) {
+//         const day = new Date(now);
+//         day.setDate(now.getDate() + i); // Adding another day
+//
+//         // Creating hours within each day
+//         for (let hour = startHour; hour < endHour; hour++) {
+//             for (let minute = 0; minute < 60; minute += intervalMinutes) {
+//                 const time = new Date(day);
+//                 time.setHours(hour);
+//                 time.setMinutes(minute);
+//
+//                 // Convert time to Israel time zone
+//                 const israelTime = new Date(time.toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
+//
+//                 // Create a time string in timetz format (hour:minute:second+timezone)
+//                 const hours = israelTime.getHours().toString().padStart(2, '0');
+//                 const minutes = israelTime.getMinutes().toString().padStart(2, '0');
+//                 const timeString = `${hours}:${minutes}:00+02`; // Adding +02 to the Israel time zone
+//
+//                 appointments.push({
+//                     date: israelTime.toISOString().split('T')[0], // Save the date
+//                     time: timeString, // Saving time in timetz format
+//                 });
+//             }
+//         }
+//     }
+//
+//     return appointments;
+// };
+//
+// /* Checking if the appointment already exists */
+// const checkIfAppointmentExists = async (date, time) => {
+//     try {
+//         const { data, error } = await supabase
+//             .from('calendar')
+//             .select('*')
+//             .eq('date', date)
+//             .eq('time', time);
+//
+//         if (error) {
+//             console.error('Error checking if appointment exists:', error.message);
+//             return false;
+//         }
+//
+//         console.log(`Appointments found for ${date} at ${time}:`, data);
+//         return data.length > 0; // If found an appointment with the same date and time
+//     } catch (err) {
+//         console.error('Unexpected error while checking appointment existence:', err.message);
+//         return false;
+//     }
+// };
+//
+// /* Deleting yesterday's appointment */
+// const deletePreviousDayAppointments = async () => {
+//     const today = new Date();
+//     today.setDate(today.getDate() - 1); // Yesterday's date
+//
+//     const yesterday = today.toISOString().split('T')[0];
+//
+//     const { data, error } = await supabase
+//         .from('calendar')
+//         .delete()
+//         .eq('date', yesterday);
+//
+//     if (error) {
+//         console.error('Error deleting previous day appointments:', error.message);
+//     } else {
+//         console.log(`Deleted appointments for ${yesterday}`);
+//     }
+// };
+//
+// /* Injecting information into the DB */
+// const insertAppointmentsToDb = async (appointments) => {
+//     try {
+//         await deletePreviousDayAppointments();
+//
+//         //Adding new appointments
+//         for (const appointment of appointments) {
+//             const exists = await checkIfAppointmentExists(appointment.date, appointment.time);
+//
+//             if (exists) {
+//                 console.log(`Appointment already exists for ${appointment.date} at ${appointment.time}`);
+//                 continue;
+//             }
+//
+//             // If the appointment does not exist, we will add it to the database
+//             const { data, error } = await supabase
+//                 .from('calendar')
+//                 .insert([{
+//                     date: appointment.date,
+//                     time: appointment.time,
+//                     available: true
+//                 }]);
+//
+//             if (error) {
+//                 console.error('Error inserting appointment:', error.message);
+//             } else {
+//                 console.log('Appointment added successfully:', data);
+//
+//                 // Check if the queue was added correctly
+//                 const { data: fetchedData, error: fetchError } = await supabase
+//                     .from('calendar')
+//                     .select('*')
+//                     .eq('date', appointment.date)
+//                     .eq('time', appointment.time);
+//
+//                 if (fetchError) {
+//                     console.error('Error fetching added appointment:', fetchError.message);
+//                 } else {
+//                     console.log('Fetched added appointment:', fetchedData);
+//                 }
+//             }
+//         }
+//     } catch (err) {
+//         console.error('Unexpected error while inserting appointments:', err.message);
+//     }
+// };
+//
+// export async function POST(req) {
+//     try {
+//         const appointments = generateDatesAndTimes(7, 9, 21, 30); // Creating an appointment for the week
+//         await insertAppointmentsToDb(appointments);
+//         return new Response('Appointments generated and inserted successfully.', { status: 200 });
+//     } catch (error) {
+//         return new Response('Error generating appointments: ' + error.message, { status: 500 });
+//     }
+// }
 
 import { supabase } from '../../lib/supabase';
 
@@ -257,29 +392,26 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
     const appointments = [];
     const now = new Date();
 
-    // Creating the dates and times for the coming week
     for (let i = 0; i < daysAhead; i++) {
         const day = new Date(now);
         day.setDate(now.getDate() + i); // Adding another day
 
-        // Creating hours within each day
         for (let hour = startHour; hour < endHour; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
-                time.setHours(hour);
-                time.setMinutes(minute);
+                time.setHours(hour, minute, 0, 0);
 
                 // Convert time to Israel time zone
                 const israelTime = new Date(time.toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
 
-                // Create a time string in timetz format (hour:minute:second+timezone)
+                // יצירת פורמט timetz
                 const hours = israelTime.getHours().toString().padStart(2, '0');
                 const minutes = israelTime.getMinutes().toString().padStart(2, '0');
-                const timeString = `${hours}:${minutes}:00+02`; // Adding +02 to the Israel time zone
+                const offset = "+02:00"; // אזור הזמן של ישראל (Winter)
 
                 appointments.push({
-                    date: israelTime.toISOString().split('T')[0], // Save the date
-                    time: timeString, // Saving time in timetz format
+                    date: israelTime.toISOString().split('T')[0], // Date in YYYY-MM-DD format
+                    time: `${hours}:${minutes}:00${offset}`, // Time in TIMETZ format
                 });
             }
         }
@@ -312,10 +444,10 @@ const checkIfAppointmentExists = async (date, time) => {
 
 /* Deleting yesterday's appointment */
 const deletePreviousDayAppointments = async () => {
-    const today = new Date();
-    today.setDate(today.getDate() - 1); // Yesterday's date
+    const israelTime = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
+    israelTime.setDate(israelTime.getDate() - 1);
 
-    const yesterday = today.toISOString().split('T')[0];
+    const yesterday = israelTime.toISOString().split('T')[0];
 
     const { data, error } = await supabase
         .from('calendar')
@@ -385,4 +517,3 @@ export async function POST(req) {
         return new Response('Error generating appointments: ' + error.message, { status: 500 });
     }
 }
-
