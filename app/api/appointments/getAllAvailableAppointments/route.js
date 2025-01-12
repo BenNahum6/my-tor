@@ -5,12 +5,11 @@ export async function POST(req) {
         try {
                 // Accepting the [date] sent on request
                 const { date } = await req.json();
-                console.log('sent [date]:', date);
 
                 // Calling Supabase to find available appointments on this [date]
                 const { data, error } = await supabase
                     .from('calendar')
-                    .select('[date], available') // Select the fields you need.
+                    .select('date, available') // Select the fields you need.
                     .eq('date', date) // Search for meetings on this [date]
                     .eq('available', true); // Available meetings
 

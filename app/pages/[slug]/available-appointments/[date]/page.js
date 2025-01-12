@@ -5,10 +5,9 @@ import PresentsAppointments from "@/app/components/PresentsAppointments";
 const AvailableAppointments = async ({ params }) => {
     const { slug, date } = params;
 
-    let apiUrl = 'http://localhost:3000/api/appointments/getAllAvailableAppointments'
-    if (process.env.NODE_ENV === 'production') {
-        apiUrl = `https://${process.env.VERCEL_URL}/api/appointments/getAllAvailableAppointments`;
-    }
+    const apiUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}/api/appointments/getAllAvailableAppointments`
+        : 'http://localhost:3000/api/appointments/getAllAvailableAppointments';
 
     // Making an HTTP call to a server-side API
     let appointments = [];
