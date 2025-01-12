@@ -13,7 +13,7 @@ const PresentsAppointments = ({ date, data }) => {
     };
 
     // מסנן את השעות ומסיר את ה- +02
-    const appointmentTimes = data.appointments.map((appointment) => appointment.time.replace('+02', ''));
+    const appointmentTimes = data.appointments ? data.appointments.map((appointment) => appointment.time.replace('+02', '')) : [];
 
     // פונקציה שתופעל כאשר נלחץ על שעה
     const handleAppointmentClick = (time) => {
@@ -27,19 +27,23 @@ const PresentsAppointments = ({ date, data }) => {
             <h2 className="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">
                 Available Appointments for {formatDate(date)}
             </h2>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {appointmentTimes.map((time, index) => (
-                    <li
-                        key={index}
-                        className="flex justify-center items-center p-4 border-2 border-gray-300 rounded-lg shadow-lg hover:bg-blue-200 cursor-pointer transition-all duration-300 dark:border-gray-700 dark:hover:bg-blue-700"
-                        onClick={() => handleAppointmentClick(time)} // הוספת פעולת לחיצה
-                    >
-                        <span className="text-xl font-medium text-gray-800 hover:text-gray-900 dark:text-gray-200 dark:hover:text-gray-100">
-                            {time}
-                        </span>
-                    </li>
-                ))}
-            </ul>
+            {appointmentTimes.length > 0 ? (
+                <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {appointmentTimes.map((time, index) => (
+                        <li
+                            key={index}
+                            className="flex justify-center items-center p-4 border-2 border-gray-300 rounded-lg shadow-lg hover:bg-blue-200 cursor-pointer transition-all duration-300 dark:border-gray-700 dark:hover:bg-blue-700"
+                            onClick={() => handleAppointmentClick(time)} // הוספת פעולת לחיצה
+                        >
+                            <span className="text-xl font-medium text-gray-800 hover:text-gray-900 dark:text-gray-200 dark:hover:text-gray-100">
+                                {time}
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p className="text-center text-gray-600 dark:text-gray-400">No available appointments for this date.</p>
+            )}
         </div>
     );
 };
