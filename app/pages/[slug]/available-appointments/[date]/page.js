@@ -5,10 +5,15 @@ import PresentsAppointments from "@/app/components/PresentsAppointments";
 const AvailableAppointments = async ({ params }) => {
     const { slug, date } = params;
 
+    let apiUrl = 'http://localhost:3000/api/appointments/getAllAvailableAppointments'
+    if (process.env.NODE_ENV === 'production') {
+        apiUrl = `https://${process.env.VERCEL_URL}/api/appointments/getAllAvailableAppointments`;
+    }
+
     // Making an HTTP call to a server-side API
     let appointments = [];
     try {
-        const response = await fetch('http://localhost:3000/api/appointments/getAllAvailableAppointments', {
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
