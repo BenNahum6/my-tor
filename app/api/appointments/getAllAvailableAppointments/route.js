@@ -5,7 +5,7 @@ export async function POST(req) {
         try {
                 // Accepting the [date] sent on request
                 const { date } = await req.json();
-
+                console.log('eeee', date);
                 // Calling Supabase to find available appointments on this [date]
                 const { data, error } = await supabase
                     .from('calendar')

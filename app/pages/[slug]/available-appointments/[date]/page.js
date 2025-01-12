@@ -17,7 +17,6 @@ const AvailableAppointments = async ({ params }) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`,
             },
             body: JSON.stringify({ date: date }),
         });
