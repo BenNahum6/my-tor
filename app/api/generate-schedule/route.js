@@ -397,7 +397,7 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
         const day = new Date(now);
         day.setDate(now.getDate() + i); // Adding another day
 
-        // Creating hours within each day with fixed intervals of 30 minutes
+        // Create appointments for each day between 9:00 and 21:00
         for (let hour = startHour; hour < endHour; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
