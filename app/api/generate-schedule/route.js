@@ -397,8 +397,22 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
         const day = new Date(now);
         day.setDate(now.getDate() + i); // Adding another day
 
-        // Create appointments for each day between 9:00 and 21:00
-        for (let hour = startHour; hour < endHour; hour++) {
+        // Check if it's Saturday (day 6)
+        if (day.getDay() === 6) {
+            // Skip Saturdays
+            console.log(`Skipping Saturday: ${day.toISOString().split('T')[0]}`);
+            continue;
+        }
+
+        // Check if it's Friday (day 5)
+        let endTime = endHour;
+        if (day.getDay() === 5) {
+            // On Friday, appointments will only be until 14:00 (2 PM)
+            endTime = 14;
+        }
+
+        // Create appointments for each day between 9:00 and the appropriate end time
+        for (let hour = startHour; hour < endTime; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
                 time.setHours(hour); // Set hour for local time (Israel)
