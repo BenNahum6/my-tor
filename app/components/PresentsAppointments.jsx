@@ -14,6 +14,7 @@ const PresentsAppointments = ({ date, data }) => {
 
     // מסנן את השעות ומסיר את ה- +02
     const appointmentTimes = data.appointments ? data.appointments.map((appointment) => appointment.time.replace('+02', '')) : [];
+    console.log(appointmentTimes); // הדפיס את הנתונים
 
     // פונקציה שתופעל כאשר נלחץ על שעה
     const handleAppointmentClick = (time) => {
