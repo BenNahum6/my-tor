@@ -30,11 +30,7 @@ const AvailableAppointments = async ({ params }) => {
     return (
         <div>
             <Navbar />
-            <h1>Available Appointments</h1>
-            <h2>Slug: {slug}</h2>
-            <h2>Date: {date}</h2>
-            <h1>Available Appointments</h1>
-            <PresentsAppointments data={appointments} /> {/* שולח את הנתונים לקומפוננטה */}
+            <PresentsAppointments date={date} data={appointments} /> {/* שולח את הנתונים לקומפוננטה */}
         </div>
     );
 };
