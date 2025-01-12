@@ -392,26 +392,29 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
     const appointments = [];
     const now = new Date();
 
+    // Creating the dates and times for the coming week
     for (let i = 0; i < daysAhead; i++) {
         const day = new Date(now);
         day.setDate(now.getDate() + i); // Adding another day
 
+        // Creating hours within each day
         for (let hour = startHour; hour < endHour; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
-                time.setHours(hour, minute, 0, 0);
+                time.setUTCHours(hour); // Set UTC hour explicitly
+                time.setUTCMinutes(minute);
 
                 // Convert time to Israel time zone
                 const israelTime = new Date(time.toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
 
-                // יצירת פורמט timetz
+                // Create a time string in timetz format (hour:minute:second+timezone)
                 const hours = israelTime.getHours().toString().padStart(2, '0');
                 const minutes = israelTime.getMinutes().toString().padStart(2, '0');
-                const offset = "+02:00"; // אזור הזמן של ישראל (Winter)
+                const timeString = `${hours}:${minutes}:00+02`; // Adding +02 for Israel time zone
 
                 appointments.push({
-                    date: israelTime.toISOString().split('T')[0], // Date in YYYY-MM-DD format
-                    time: `${hours}:${minutes}:00${offset}`, // Time in TIMETZ format
+                    date: israelTime.toISOString().split('T')[0], // Save the date
+                    time: timeString, // Saving time in timetz format
                 });
             }
         }
