@@ -4,6 +4,7 @@ import PresentsAppointments from "@/app/components/PresentsAppointments";
 // קומפוננטה שמבצעת קריאת API בצד השרת (בלי `getServerSideProps`)
 const AvailableAppointments = async ({ params }) => {
     const { slug, date } = params;
+    const apiKey = process.env.MY_API_KEY; // השתמש במפתח שהגדרת ב-Vercel
 
     const apiUrl = process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}/api/appointments/getAllAvailableAppointments`
@@ -16,6 +17,7 @@ const AvailableAppointments = async ({ params }) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
             },
             body: JSON.stringify({ date: date }),
         });
