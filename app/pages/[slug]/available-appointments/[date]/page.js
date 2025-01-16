@@ -1,5 +1,5 @@
 import Navbar from "@/app/components/Navbar";
-// import PresentsAppointments from "@/app/components/PresentsAppointments";
+import PresentsAppointments from "@/app/components/PresentsAppointments";
 
 // קומפוננטה שמבצעת קריאת API בצד השרת (בלי `getServerSideProps`)
 const AvailableAppointments = async ({ params }) => {
@@ -11,6 +11,7 @@ const AvailableAppointments = async ({ params }) => {
     console.log("Using API URL:", apiUrl);  // הוספת לוג כאן
 
     // Making an HTTP call to a server-side API
+    let timeData = []
     try {
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -26,7 +27,8 @@ const AvailableAppointments = async ({ params }) => {
         }
 
         const data = await response.json(); // The information received from the API
-        console.log('Appointments are available for', date, ':', data);
+        timeData = data
+        console.log('Appointments are available for', date, ':', timeData);
     } catch (error) {
         console.error('Error sending request:', error);
     }
@@ -34,7 +36,7 @@ const AvailableAppointments = async ({ params }) => {
     return (
         <div>
             <Navbar />
-            {/*<PresentsAppointments date={date} data={appointments} /> /!* שולח את הנתונים לקומפוננטה *!/*/}
+            <PresentsAppointments date={date} data={timeData} /> {/* שולח את הנתונים לקומפוננטה */}
         </div>
     );
 };
