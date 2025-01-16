@@ -1,14 +1,13 @@
 import Navbar from "@/app/components/Navbar";
 import PresentsAppointments from "@/app/components/PresentsAppointments";
 
-// קומפוננטה שמבצעת קריאת API בצד השרת (בלי `getServerSideProps`)
+// Calling the POST API to get the available hours on a specific date
 const AvailableAppointments = async ({ params }) => {
     const { slug, date } = params;
 
     const apiUrl = process.env.API_URL
         ? `${process.env.API_URL}/api/appointments/getAllAvailableAppointments`
         : 'http://localhost:3000/api/appointments/getAllAvailableAppointments';
-    console.log("Using API URL:", apiUrl);  // הוספת לוג כאן
 
     // Making an HTTP call to a server-side API
     let timeData = []
@@ -36,7 +35,7 @@ const AvailableAppointments = async ({ params }) => {
     return (
         <div>
             <Navbar />
-            <PresentsAppointments date={date} data={timeData} /> {/* שולח את הנתונים לקומפוננטה */}
+            <PresentsAppointments date={date} data={timeData} /> \\Sends the date and available times on that date
         </div>
     );
 };
