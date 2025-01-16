@@ -11,7 +11,6 @@ const AvailableAppointments = async ({ params }) => {
     console.log("Using API URL:", apiUrl);  // הוספת לוג כאן
 
     // Making an HTTP call to a server-side API
-    let appointments = [];
     try {
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -26,9 +25,8 @@ const AvailableAppointments = async ({ params }) => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        appointments = data; // The information received from the API
-        console.log('Appointments are available for', date, ':', appointments);
+        const data = await response.json(); // The information received from the API
+        console.log('Appointments are available for', date, ':', data);
     } catch (error) {
         console.error('Error sending request:', error);
     }
