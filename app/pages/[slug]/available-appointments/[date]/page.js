@@ -4,16 +4,16 @@ import Navbar from "@/app/components/Navbar";
 // קומפוננטה שמבצעת קריאת API בצד השרת (בלי `getServerSideProps`)
 const AvailableAppointments = async ({ params }) => {
     const { slug, date } = params;
-    const apiKey = process.env.MY_API_KEY; // השתמש במפתח שהגדרת ב-Vercel
+
+    const apiUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}/api/appointments/getAllAvailableAppointments`
+        : 'http://localhost:3000/api/appointments/getAllAvailableAppointments';
+    console.log("Using API URL:", apiUrl);  // הוספת לוג כאן
 
     // Making an HTTP call to a server-side API
     let appointments = [];
     try {
-        // הגדרת כתובת בסיס מתוך משתנה סביבה
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
-        // שליחת הבקשה עם נתיב מלא
-        const response = await fetch(`${baseUrl}/api/appointments/getAllAvailableAppointments`, {
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -27,7 +27,8 @@ const AvailableAppointments = async ({ params }) => {
         }
 
         const data = await response.json();
-        console.log('Appointments are available for', date, ':', data);
+        appointments = data; // The information received from the API
+        console.log('Appointments are available for', date, ':', appointments);
     } catch (error) {
         console.error('Error sending request:', error);
     }
