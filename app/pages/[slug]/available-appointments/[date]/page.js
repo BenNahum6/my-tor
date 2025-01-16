@@ -5,8 +5,8 @@ import Navbar from "@/app/components/Navbar";
 const AvailableAppointments = async ({ params }) => {
     const { slug, date } = params;
 
-    const apiUrl = process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}/api/appointments/getAllAvailableAppointments`
+    const apiUrl = process.env.API_URL
+        ? `https://${process.env.API_URL}/api/appointments/getAllAvailableAppointments`
         : 'http://localhost:3000/api/appointments/getAllAvailableAppointments';
     console.log("Using API URL:", apiUrl);  // הוספת לוג כאן
 
