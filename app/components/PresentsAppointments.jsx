@@ -22,6 +22,9 @@ const PresentsAppointments = ({ date, data }) => {
         // כאן אפשר להוסיף פעולה אחרת, כמו פתיחת דף נוסף, שליחה של נתונים וכו'..
     };
 
+    console.log("Vercel URL:", process.env.VERCEL_URL);
+    console.log("API Key:", process.env.NEXT_PRIVATE_SUPABASE_SERVICE_KEY);
+
     return (
         <div className="p-6 bg-white dark:bg-gray-800">
             {/* הצגת התאריך לפי הפורמט */}

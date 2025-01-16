@@ -9,11 +9,12 @@ export async function POST(req) {
                 // Calling Supabase to find available appointments on this [date]
                 const { data, error } = await supabase
                     .from('calendar')
-                    .select('date, available') // Select the fields you need.
-                    .eq('date', date) // Search for meetings on this [date]
-                    .eq('available', true); // Available meetings
+                    .select('date, time, available')
+                    .eq('date', date)
+                    .eq('available', true);
 
-                // If there is an error calling Supabase
+                console.log('Data received from Supabase:', data); // הוספת לוג לבדיקת הנתונים שהתקבלו
+
                 if (error) {
                         console.error('Error fetching available appointments:', error);
                         return NextResponse.json(
@@ -21,6 +22,7 @@ export async function POST(req) {
                             { status: 500 }
                         );
                 }
+
 
                 // If available appointments are found, return the data.
                 if (data && data.length > 0) {
