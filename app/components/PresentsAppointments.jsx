@@ -2,33 +2,30 @@
 import React from 'react';
 
 const PresentsAppointments = ({ date, data }) => {
-    // פונקציה להמיר את התאריך לפורמט DD/MM/YYYY
+    // Convert the date to DD/MM/YYYY format
     const formatDate = (dateString) => {
-        const dateObj = new Date(dateString); // יצירת אובייקט Date מתוך המחרוזת
-        const day = String(dateObj.getDate()).padStart(2, '0'); // מחזיר את היום עם אפס מוביל אם צריך
-        const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // מחזיר את החודש עם אפס מוביל אם צריך
-        const year = dateObj.getFullYear(); // מחזיר את השנה
+        const dateObj = new Date(dateString);
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const year = dateObj.getFullYear();
 
-        return `${day}/${month}/${year}`; // מחזיר את התאריך בפורמט DD/MM/YYYY
+        return `${day}/${month}/${year}`;
     };
 
-    // מסנן את השעות ומסיר את ה- +02
+    // Filters the hours and removes the +02
     const appointmentTimes = data.appointments ? data.appointments.map((appointment) => appointment.time.replace('+02', '')) : [];
     console.log(appointmentTimes); // הדפיס את הנתונים
 
-    // פונקציה שתופעל כאשר נלחץ על שעה
+    // Will be activated when a time is clicked
     const handleAppointmentClick = (time) => {
         alert(`You selected the appointment at ${time}`);
         // כאן אפשר להוסיף פעולה אחרת, כמו פתיחת דף נוסף, שליחה של נתונים וכו'..
     };
 
-    console.log("Vercel URL:", process.env.VERCEL_URL);
-    console.log("API Key:", process.env.NEXT_PRIVATE_SUPABASE_SERVICE_KEY);
-
     return (
-        <div className="p-6 bg-white dark:bg-gray-800">
+        <div className="p-6 max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md">
             {/* הצגת התאריך לפי הפורמט */}
-            <h2 className="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">
+            <h2 className="text-2xl font-bold mb-4 mt-4 text-center text-gray-900 dark:text-gray-100">
                 Available Appointments for {formatDate(date)}
             </h2>
             {appointmentTimes.length > 0 ? (
@@ -36,12 +33,13 @@ const PresentsAppointments = ({ date, data }) => {
                     {appointmentTimes.map((time, index) => (
                         <li
                             key={index}
-                            className="flex justify-center items-center p-4 border-2 border-gray-300 rounded-lg shadow-lg hover:bg-blue-200 cursor-pointer transition-all duration-300 dark:border-gray-700 dark:hover:bg-blue-700"
+                            className="flex justify-center items-center p-3 border-2 border-gray-300 rounded-lg shadow-lg hover:bg-blue-200 cursor-pointer transition-all duration-300 dark:border-gray-700 dark:hover:bg-blue-700"
                             onClick={() => handleAppointmentClick(time)} // הוספת פעולת לחיצה
                         >
-                            <span className="text-xl font-medium text-gray-800 hover:text-gray-900 dark:text-gray-200 dark:hover:text-gray-100">
-                                {time}
-                            </span>
+                    <span
+                        className="text-lg font-medium text-gray-800 hover:text-gray-900 dark:text-gray-200 dark:hover:text-gray-100">
+                        {time}
+                    </span>
                         </li>
                     ))}
                 </ul>
