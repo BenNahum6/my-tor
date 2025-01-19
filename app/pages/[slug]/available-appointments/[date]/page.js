@@ -5,6 +5,7 @@ import PresentsAppointments from "@/app/components/PresentsAppointments";
 const AvailableAppointments = async ({ params }) => {
     const { slug, date } = params;
 
+    console.log(' pageeeeee - process.env.NEXT_PUBLIC_API_URL: ',process.env.NEXT_PUBLIC_API_URL);
     const apiUrl = process.env.NODE_ENV === 'production'
         ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/getAllAvailableAppointments`
         : 'http://localhost:3000/api/appointments/getAllAvailableAppointments';
