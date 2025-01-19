@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/app/lib/supabase';
 
 export async function POST(req) {
+
         try {
                 // Accepting the [date] sent on request
                 const { date } = await req.json();
@@ -13,7 +14,7 @@ export async function POST(req) {
                     .eq('date', date)
                     .eq('available', true);
 
-                console.log('Data received from Supabase:', data); // הוספת לוג לבדיקת הנתונים שהתקבלו
+                console.log('API - Data received from Supabase:', data); // הוספת לוג לבדיקת הנתונים שהתקבלו
 
                 if (error) {
                         console.error('Error fetching available appointments:', error);
@@ -23,12 +24,14 @@ export async function POST(req) {
                         );
                 }
 
-
                 // If available appointments are found, return the data.
                 if (data && data.length > 0) {
+                        // סינון הנתונים כך שיחזרו רק אלה ש-available הם true
+                        const availableAppointments = data.filter(appointment => appointment.available === true);
+
                         return NextResponse.json({
                                 success: true,
-                                appointments: data.map(appointment => ({
+                                appointments: availableAppointments.map(appointment => ({
                                         time: appointment.time,
                                         available: appointment.available,
                                 })),
