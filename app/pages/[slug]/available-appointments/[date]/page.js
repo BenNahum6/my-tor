@@ -5,10 +5,12 @@ import PresentsAppointments from "@/app/components/PresentsAppointments";
 const AvailableAppointments = async ({ params }) => {
     const { slug, date } = params;
 
-    console.log(' pageeeeee - process.env.NEXT_PUBLIC_API_URL: ',process.env.NEXT_PUBLIC_API_URL);
+    console.log(' pageeeeee - process.env.NEXT_PUBLIC_API_URL: ', process.env.NEXT_PUBLIC_API_URL);// delete
     const apiUrl = process.env.NODE_ENV === 'production'
         ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/getAllAvailableAppointments`
         : 'http://localhost:3000/api/appointments/getAllAvailableAppointments';
+
+    console.log(' api url: ', apiUrl);// delete
 
     // Making an HTTP call to a server-side API
     let timeData = []
@@ -36,7 +38,8 @@ const AvailableAppointments = async ({ params }) => {
     return (
         <div>
             <Navbar />
-            <PresentsAppointments date={date} data={timeData} /> \\Sends the date and available times on that date
+            {/*Sends the date and available times on that date*/}
+            <PresentsAppointments date={date} data={timeData} />
         </div>
     );
 };
