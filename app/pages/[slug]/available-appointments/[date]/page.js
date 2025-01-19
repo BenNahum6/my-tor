@@ -27,7 +27,7 @@ const AvailableAppointments = async ({ params }) => {
 
         const data = await response.json(); // The information received from the API
         timeData = data
-        console.log('Appointments are available for', date, ':', timeData);
+        console.log('Page available-appointments - Appointments are available for', date, ':', timeData);
     } catch (error) {
         console.error('Error sending request:', error);
     }
