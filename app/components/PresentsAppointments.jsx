@@ -15,11 +15,9 @@ const PresentsAppointments = ({ date, data }) => {
     // הפעלת קליק על שעה
     const handleAppointmentClick = async (date, time) => {
         try {
-            //todo: add production URL
-
             const apiUrl = process.env.API_URL
                 ? `${process.env.API_URL}/api/appointments/making-appointment/?date=${date}&time=${time}`
-                : `http://localhost:3000/api/appointments/making-appointment/?date=${date}&time=${time}`;
+                : `https://my-tor.vercel.app/api/appointments/making-appointment/?date=${date}&time=${time}`;
 
             const response = await fetch(apiUrl);
 
