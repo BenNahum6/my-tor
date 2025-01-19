@@ -17,7 +17,9 @@ const PresentsAppointments = ({ date, data }) => {
         try {
             const apiUrl = process.env.API_URL
                 ? `${process.env.API_URL}/api/appointments/making-appointment/?date=${date}&time=${time}`
-                : `https://my-tor.vercel.app/api/appointments/making-appointment/?date=${date}&time=${time}`;
+                : `http://localhost:3000/api/appointments/making-appointment/?date=${date}&time=${time}`;
+
+            console.log("API URL: ", apiUrl);
 
             const response = await fetch(apiUrl);
 
