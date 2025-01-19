@@ -15,7 +15,8 @@ const PresentsAppointments = ({ date, data }) => {
     // הפעלת קליק על שעה
     const handleAppointmentClick = async (date, time) => {
         try {
-            const apiUrl = process.env.API_URL
+            console.log('process.env.API_URL: ', process.env.NODE_ENV)
+            const apiUrl = process.env.NODE_ENV === 'production'
                 ? `${process.env.API_URL}/api/appointments/making-appointment/?date=${date}&time=${time}`
                 : `http://localhost:3000/api/appointments/making-appointment/?date=${date}&time=${time}`;
 
