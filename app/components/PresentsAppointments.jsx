@@ -17,7 +17,7 @@ const PresentsAppointments = ({ date, data }) => {
         try {
             console.log('process.env.API_URL: ', process.env.NODE_ENV)
             const apiUrl = process.env.NODE_ENV === 'production'
-                ? `${process.env.API_URL}/api/appointments/making-appointment/?date=${date}&time=${time}`
+                ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/making-appointment/?date=${date}&time=${time}`
                 : `http://localhost:3000/api/appointments/making-appointment/?date=${date}&time=${time}`;
 
             console.log("API URL: ", apiUrl);

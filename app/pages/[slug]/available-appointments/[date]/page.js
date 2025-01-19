@@ -6,7 +6,7 @@ const AvailableAppointments = async ({ params }) => {
     const { slug, date } = params;
 
     const apiUrl = process.env.API_URL
-        ? `${process.env.API_URL}/api/appointments/getAllAvailableAppointments`
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/getAllAvailableAppointments`
         : 'http://localhost:3000/api/appointments/getAllAvailableAppointments';
 
     // Making an HTTP call to a server-side API
