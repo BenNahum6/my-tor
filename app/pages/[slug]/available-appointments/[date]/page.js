@@ -23,6 +23,7 @@ const AvailableAppointments = async ({ params }) => {
             headers: {
                 'Content-Type': 'application/json',
                 'apikey': process.env.NEXT_PRIVATE_SUPABASE_SERVICE_KEY,
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
             },
             body: JSON.stringify({ date: date }),
         });
