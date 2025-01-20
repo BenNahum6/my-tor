@@ -1,7 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import Registration from './Registration'; // ייבוא הקומפוננטה החדשה
-import { formatDate, formatAppointmentTimes } from '../lib/utils';  // ייבוא הפונקציה מקובץ utils.js
+import { formatDate, formatAppointmentTimes } from '../utils/helper';  // ייבוא הפונקציה מקובץ utils.js
+import { fetchSpecificAppointment } from '../lib/api';
 
 const PresentsAppointments = ({ date, data }) => {
     const [showRegistration, setShowRegistration] = useState(false);
@@ -12,35 +13,22 @@ const PresentsAppointments = ({ date, data }) => {
     const appointmentTimes = formatAppointmentTimes(data.appointments);
     console.log('appointmentTimes: ', appointmentTimes);
 
-    // הפעלת קליק על שעה
     const handleAppointmentClick = async (date, time) => {
         try {
-            console.log('process.env.API_URL: ', process.env.NODE_ENV)
-            const apiUrl = process.env.NODE_ENV === 'production'
-                ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/making-appointment/?date=${date}&time=${time}`
-                : `http://localhost:3000/api/appointments/making-appointment/?date=${date}&time=${time}`;
-
-            console.log("API URL: ", apiUrl);
-
-            const response = await fetch(apiUrl);
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
-            }
-
-            const data = await response.json();
+            const data = await fetchSpecificAppointment(date, time);
 
             if (data.available) {
-                // הצגת קומפוננטת ההרשמה
                 setSelectedDetails({ date, time });
                 setShowRegistration(true);
             } else {
                 alert(`The appointment at ${time} is not available.`);
             }
         } catch (error) {
-            console.error('Error making the appointment:', error);
+            alert("An error occurred while making the appointment.");
+            console.error('Error during appointment:', error);  // הדפסת שגיאה אם יש
         }
     };
+
 
     return (
         <div className="p-6 max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md">
