@@ -14,7 +14,7 @@ export async function POST(req) {
                     .eq('date', date)
                     .eq('available', true);
 
-                console.log('API - Data received from Supabase:', data); // הוספת לוג לבדיקת הנתונים שהתקבלו
+                // console.log('API - Data received from Supabase:', data);
 
                 if (error) {
                         console.error('Error fetching available appointments:', error);
@@ -26,7 +26,7 @@ export async function POST(req) {
 
                 // If available appointments are found, return the data.
                 if (data && data.length > 0) {
-                        // סינון הנתונים כך שיחזרו רק אלה ש-available הם true
+                        // Filtering the data so that only those that are available are returned are true
                         const availableAppointments = data.filter(appointment => appointment.available === true);
 
                         return NextResponse.json({

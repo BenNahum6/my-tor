@@ -1,4 +1,4 @@
-// Convert date to dd/mm/yyyy format
+/* Convert date to dd/mm/yyyy format */
 export const formatDate = (dateString) => {
     const dateObj = new Date(dateString);
     const day = String(dateObj.getDate()).padStart(2, '0');
@@ -8,6 +8,7 @@ export const formatDate = (dateString) => {
     return `${day}/${month}/${year}`;
 };
 
+/* Deletes the +02 and the seconds from the time*/
 export const formatAppointmentTimes = (appointments) => {
     return appointments
         ? appointments.map((appointment) => {

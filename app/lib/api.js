@@ -1,4 +1,4 @@
-/*fetch all available appointment in specific data*/
+/* fetch all available appointment in specific data */
 export const fetchAvailableAppointments = async (date) => {
     const apiUrl = process.env.NODE_ENV === 'production'
         ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/getAllAvailableAppointments`
@@ -28,7 +28,7 @@ export const fetchAvailableAppointments = async (date) => {
     }
 };
 
-/*fetch available appointment in specific data & time*/
+/* fetch available appointment in specific data & time */
 export const fetchSpecificAppointment = async (date, time) => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
@@ -52,3 +52,5 @@ export const fetchSpecificAppointment = async (date, time) => {
         throw error;  // לזרוק את השגיאה לכיוון הקורא
     }
 };
+
+// TODO deleteAppointment
