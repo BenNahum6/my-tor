@@ -17,7 +17,8 @@ const fetchAppointments = async () => {
             console.error('Error fetching generate-schedule:', error.message); // Show the error message with details
             return;
         }
-        console.log('Appointments fetched successfully:', data);
+        // console.log('Appointments fetched successfully:', data);
+        console.log('Appointments fetched successfully: data');
     } catch (err) {
         console.error('Unexpected error:', err.message); // Handling unexpected errors
     }
