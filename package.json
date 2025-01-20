@@ -14,7 +14,8 @@
     "mysql2": "^3.12.0",
     "next": "^14.2.14",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "redis": "^4.7.0"
   },
   "devDependencies": {
     "@types/react": "19.0.2",
