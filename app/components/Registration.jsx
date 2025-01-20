@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { formatDate } from "@/app/lib/utils";
+import { formatDate } from "@/app/utils/helper";
 
 const Registration = ({ date, time, onClose }) => {
     const formattedDate = formatDate(date);
