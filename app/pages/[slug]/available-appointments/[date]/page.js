@@ -2,20 +2,22 @@ import Navbar from "@/app/components/Navbar";
 import PresentsAppointments from "@/app/components/PresentsAppointments";
 import { fetchAvailableAppointments } from "@/app/lib/api"; // ייבוא הפונקציה
 
-// Calling the POST API to get the available hours on a specific date
-const AvailableAppointments = async ({ params }) => {
+// הפונקציה בצד השרת
+export default async function AvailableAppointments({ params }) {
     const { date } = params;
 
-    // HTTP req
+    // קריאה ל-API כדי להחזיר את הנתונים
     const timeData = await fetchAvailableAppointments(date);
+
+    if (!timeData) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div>
             <Navbar />
-            {/* Sends the date and available times on that date */}
+            {/* שולח את הנתונים שנאספו */}
             <PresentsAppointments date={date} data={timeData} />
         </div>
     );
-};
-
-export default AvailableAppointments;
+}
