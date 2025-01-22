@@ -113,7 +113,6 @@ export async function POST(req) {
 
         console.log('making-appointment - Date:', date, 'Time:', timeWithZone);
 
-        // קריאה ל-Supabase לנעילת תור אם זמין
         const { data, error } = await supabase
             .from('calendar')
             .update({ locked: true }) // עדכון שדה locked ל-true
@@ -121,7 +120,9 @@ export async function POST(req) {
             .eq('time', timeWithZone)
             .eq('available', true) // תנאי שהתור עדיין זמין
             .eq('locked', false)
-            .select(); // החזרת הנתונים לאחר העדכון
+            .select('*');
+
+        // console.log(data)
 
         if (error) {
             console.error('Error locking appointment:', error);
@@ -133,7 +134,7 @@ export async function POST(req) {
 
         if (data && data.length > 0) {
             return new Response(
-                JSON.stringify({ success: true, locked: true }),
+                JSON.stringify({ success: true, locked: true, data }),
                 { status: 200 }
             );
         }

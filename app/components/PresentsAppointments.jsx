@@ -16,8 +16,9 @@ const PresentsAppointments = ({ date, data }) => {
     const handleAppointmentClick = async (date, time) => {
         try {
             const data = await fetchSpecificAppointment(date, time);
+            // console.log("data from fetchSpecificAppointment: ", data);
 
-            if (data.available) {
+            if (data.locked && data.data[0].available) {
                 setSelectedDetails({ date, time });
                 setShowRegistration(true);
             } else {
