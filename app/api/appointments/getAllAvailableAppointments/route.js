@@ -29,10 +29,19 @@ export async function POST(req) {
 
                 // If available appointments are found, the data is returned.
                 if (data && data.length > 0) {
-                        const availableAppointments = data.map(appointment => ({
-                                time: appointment.time,
-                                available: appointment.available,
-                        }));
+                        const availableAppointments = data
+                            .map(appointment => ({
+                                    time: appointment.time,
+                                    available: appointment.available,
+                            }))
+                            // Sort appointments by time in ascending order
+                            .sort((a, b) => {
+                                    const timeA = a.time.split(':').map(Number); // Split 'HH:mm' into [HH, mm]
+                                    const timeB = b.time.split(':').map(Number);
+
+                                    // Compare hours first, then minutes
+                                    return timeA[0] - timeB[0] || timeA[1] - timeB[1];
+                            });
 
                         // Returning data with correct cache headers
                         const response = NextResponse.json({
@@ -47,7 +56,6 @@ export async function POST(req) {
 
                         return response;
                 }
-
                 // If there are no appointments available
                 return NextResponse.json({
                         success: true,
