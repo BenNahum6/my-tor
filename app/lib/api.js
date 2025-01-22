@@ -66,18 +66,15 @@ export const fetchSpecificAppointment = async (date, time) => {
     }
 };
 
-
-// TODO deleteAppointment
+/* fetch reset specific appointment */
 export const fetchResetAppointment = async (date, time) => {
     try {
-        // לקביעת ה-API URL בהתאם לסביבה (Production או Development)
         const apiUrl = process.env.NODE_ENV === 'production'
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/reset-appointment`
             : `http://localhost:3000/api/appointments/reset-appointment`;
 
         console.log("API URL:", apiUrl);
 
-        // שליחת בקשת POST עם הנתונים ל-API שלך
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -91,7 +88,7 @@ export const fetchResetAppointment = async (date, time) => {
 
         if (response.ok) {
             const responseData = await response.json();
-            console.log('API Response:', responseData); // הדפסת התגובה מה-API
+            console.log('API Response:', responseData);
         } else {
             console.log('Error submitting form:', response.statusText);
         }
