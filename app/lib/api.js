@@ -32,54 +32,24 @@ export const fetchAvailableAppointments = async (date) => {
 
 
 /* fetch available appointment in specific data & time */
-// export const fetchSpecificAppointment = async (date, time) => {
-//     try {
-//         const apiUrl = process.env.NODE_ENV === 'production'
-//             ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/making-appointment?date=${date}&time=${time}`
-//             : `http://localhost:3000/api/appointments/making-appointment?date=${date}&time=${time}`;
-//
-//         console.log("API URL:", apiUrl);  // הדפסת ה-URL שמבצע את הקריאה
-//
-//         const response = await fetch(apiUrl, {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'apikey': process.env.NEXT_PRIVATE_SUPABASE_SERVICE_KEY,
-//                 'Cache-Control': 'no-cache, no-store, must-revalidate',
-//             },
-//         });
-//
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-//
-//         const data = await response.json();
-//         return data;
-//     } catch (error) {
-//         console.error('Error making the appointment:', error);
-//         throw error;  // לזרוק את השגיאה לכיוון הקורא
-//     }
-// };
-
-// שינוי בלקוח: שימוש ב-POST במקום GET
 export const fetchSpecificAppointment = async (date, time) => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/making-appointment`
             : `http://localhost:3000/api/appointments/making-appointment`;
 
-        console.log("API URL:", apiUrl);  // הדפסת ה-URL שמבצע את הקריאה
+        console.log("API URL:", apiUrl);
 
         const response = await fetch(apiUrl, {
-            method: 'POST', // שימוש ב-POST
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'apikey': process.env.NEXT_PRIVATE_SUPABASE_SERVICE_KEY,
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
             },
             body: JSON.stringify({
-                date: date,
-                time: time,
+                date,
+                time,
             }),
         });
 
@@ -88,10 +58,11 @@ export const fetchSpecificAppointment = async (date, time) => {
         }
 
         const data = await response.json();
+        // console.log("lib api: ", data);
         return data;
     } catch (error) {
         console.error('Error making the appointment:', error);
-        throw error;  // לזרוק את השגיאה לכיוון הקורא
+        throw error;
     }
 };
 
