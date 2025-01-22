@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { formatDate } from "@/app/utils/helper";
-import {fetchResetAppointment, fetchSpecificAppointment} from "@/app/lib/api";
+import {fetchResetAppointment, fetchSetAppointment, fetchSpecificAppointment} from "@/app/lib/api";
 
 const Registration = ({ date, time, onClose, onTimeout }) => {
     const formattedDate = formatDate(date);
-    const timeInSec = 1*5;
+    const timeInSec = 1*15;
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -71,7 +71,7 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
 
         // בדיקת שדות חובה
         if (!formData.firstName || !formData.lastName || !formData.phone) {
-            alert('All fields are required!');
+            alert('כל השדות הם חובה!');
             return;
         }
 
@@ -80,22 +80,26 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
         const phoneRegex = /^05\d{8}$/; // Format 05XXXXXXXX
 
         if (!nameRegex.test(formData.firstName)) {
-            alert('First name must contain only letters!');
+            alert('שם פרטי יכול להכיל רק אותיות!');
             return;
         }
 
         if (!nameRegex.test(formData.lastName)) {
-            alert('Last name must contain only letters!');
+            alert('שם משפחה יכול להכיל רק אותיות!');
             return;
         }
 
         if (!phoneRegex.test(formData.phone)) {
-            alert('Phone number must contain only numbers!');
+            alert('מספר הטלפון חייב להכיל 10 ספרות בתבנית נכונה!');
             return;
         }
 
-        // const data = await fetchSetAppointment();
+        const data = await fetchSetAppointment(date, time, formData.firstName, formData.lastName, formData.phone);
 
+        // אם הבקשה הצליחה
+        if (data) {
+            console.log('collll'); // הדפסת "collll" אם הבקשה הצליחה
+        }
 
         stopTimer(); // אם המשתמש שלח את הנתונים, נעצור את הטיימר
         onClose(); // סגירת המודל לאחר שליחה

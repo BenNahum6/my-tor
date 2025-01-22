@@ -96,3 +96,38 @@ export const fetchResetAppointment = async (date, time) => {
         console.log('Error submitting form:', error);
     }
 };
+
+/*  */
+export const fetchSetAppointment = async (date, time, firstName, lastName, phone) => {
+    try {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/set-appointment`
+            : `http://localhost:3000/api/appointments/set-appointment`;
+
+        console.log("API URL:", apiUrl);
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                date: date,
+                time: time,
+                firstName: firstName,
+                lastName: lastName,
+                phone: phone,
+                available: false // עדכון שדה available ל-false
+            }),
+        });
+
+        if (response.ok) {
+            const responseData = await response.json();
+            console.log('API Response:', responseData); // הדפסת התגובה מה-API
+        } else {
+            console.log('Error submitting form:', response.statusText);
+        }
+    } catch (error) {
+        console.log('Error submitting form:', error);
+    }
+};
