@@ -1,18 +1,21 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/app/lib/supabase';
 
-export async function POST(req) {
+// Set runtime as Edge
+export const runtime = 'edge';
 
+export async function POST(req) {
         try {
-                // Accepting the [date] sent on request
+                // Receives the data sent in the request (date)
                 const { date } = await req.json();
 
-                // Calling Supabase to find available appointments on this [date]
+                // Request to DB to find available appointments
                 const { data, error } = await supabase
                     .from('calendar')
-                    .select('date, time, available')
+                    .select('date, time, available, locked')
                     .eq('date', date)
-                    .eq('available', true);
+                    .eq('available', true)
+                    .eq('locked', false);
 
                 // console.log('API - Data received from Supabase:', data);
 
@@ -24,24 +27,31 @@ export async function POST(req) {
                         );
                 }
 
-                // If available appointments are found, return the data.
+                // If available appointments are found, the data is returned.
                 if (data && data.length > 0) {
-                        // Filtering the data so that only those that are available are returned are true
-                        const availableAppointments = data.filter(appointment => appointment.available === true);
+                        const availableAppointments = data.map(appointment => ({
+                                time: appointment.time,
+                                available: appointment.available,
+                        }));
 
-                        return NextResponse.json({
+                        // Returning data with correct cache headers
+                        const response = NextResponse.json({
                                 success: true,
-                                appointments: availableAppointments.map(appointment => ({
-                                        time: appointment.time,
-                                        available: appointment.available,
-                                })),
+                                appointments: availableAppointments,
                         });
+
+                        // Setting cache headers that will prevent data from being saved
+                        response.headers.set('Cache-Control', 'no-store, must-revalidate');
+                        response.headers.set('Pragma', 'no-cache');
+                        response.headers.set('Expires', '0');
+
+                        return response;
                 }
 
-                // If there are no appointments available on this [date]
+                // If there are no appointments available
                 return NextResponse.json({
                         success: true,
-                        appointments: [], // No appointments available
+                        appointments: [],
                 });
 
         } catch (error) {
@@ -52,4 +62,3 @@ export async function POST(req) {
                 );
         }
 }
-
