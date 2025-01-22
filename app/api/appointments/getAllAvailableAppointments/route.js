@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/app/lib/supabase';
 
-// הגדרת runtime כ-Edge
-export const config = {
-        runtime: 'edge', // מפעיל פונקציות Edge
-};
+// Set runtime as Edge
+export const runtime = 'edge';
 
 export async function POST(req) {
         try {
