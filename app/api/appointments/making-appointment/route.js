@@ -1,8 +1,10 @@
 import { supabase } from '@/app/lib/supabase';
+import { unlockAppointment } from './unlock-appointment/route';
 
+/* Locks the appointment for a predefined time */
 export async function POST(req) {
     try {
-        const { date, time } = await req.json(); // קריאה לנתונים מה-body ולא מה-URL
+        const { date, time } = await req.json();
         const timeWithZone = time + ':00+02'; // פורמט HH:MM:SS+timeZone
 
         console.log('making-appointment - Date:', date, 'Time:', timeWithZone);
@@ -16,8 +18,6 @@ export async function POST(req) {
             .eq('locked', false)
             .select('*');
 
-        // console.log(data)
-
         if (error) {
             console.error('Error locking appointment:', error);
             return new Response(
@@ -26,11 +26,22 @@ export async function POST(req) {
             );
         }
 
+        // שליחה של Response למשתמש
         if (data && data.length > 0) {
-            return new Response(
+            // שליחה של Response עם נתוני התור
+            const response = new Response(
                 JSON.stringify({ success: true, locked: true, data }),
                 { status: 200 }
             );
+
+            // התחלת טיימר של 5 דקות לאחר שליחת ה-Response
+            setTimeout(async () => {
+                // קריאה לפונקציה של unlockAppointment אחרי 5 דקות
+                await unlockAppointment(date, time);
+            }, 10000); // 5 דקות (300,000 מילי-שניות)
+
+
+            return response;
         }
 
         return new Response(
