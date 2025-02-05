@@ -30,7 +30,6 @@ export const fetchAvailableAppointments = async (date) => {
     }
 };
 
-
 /* fetch available appointment in specific data & time */
 export const fetchSpecificAppointment = async (date, time) => {
     try {
@@ -97,7 +96,7 @@ export const fetchResetAppointment = async (date, time) => {
     }
 };
 
-/*  */
+/* fetch set specific appointment */
 export const fetchSetAppointment = async (date, time, firstName, lastName, phone) => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
@@ -131,3 +130,4 @@ export const fetchSetAppointment = async (date, time, firstName, lastName, phone
         console.log('Error submitting form:', error);
     }
 };
+

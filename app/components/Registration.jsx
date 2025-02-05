@@ -4,7 +4,7 @@ import {fetchResetAppointment, fetchSetAppointment, fetchSpecificAppointment} fr
 
 const Registration = ({ date, time, onClose, onTimeout }) => {
     const formattedDate = formatDate(date);
-    const timeInSec = 1*15;
+    const timeInSec = 3;
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -49,11 +49,11 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
             });
         }, 1000);
 
-        setTimer(timeoutId); // שמירה של ה-Timeout ID
+        setTimer(timeoutId);
     };
 
     const stopTimer = () => {
-        clearInterval(timer); // עצירת הטיימר במקרה שהמשתמש שלח את הנתונים
+        clearInterval(timer);
     };
 
     const handleInputChange = (e) => {
@@ -65,7 +65,7 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
         e.preventDefault();
 
         if (timeLeft <= 0) {
-            alert('הזמן עבר, לא ניתן לשלוח את הטופס');
+            alert('Time has passed, the form cannot be submitted.');
             return;
         }
 
@@ -96,20 +96,20 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
 
         const data = await fetchSetAppointment(date, time, formData.firstName, formData.lastName, formData.phone);
 
-        // אם הבקשה הצליחה
-        if (data) {
-            console.log('collll'); // הדפסת "collll" אם הבקשה הצליחה
-        }
-
         stopTimer(); // אם המשתמש שלח את הנתונים, נעצור את הטיימר
         onClose(); // סגירת המודל לאחר שליחה
     };
 
+    /* Handles exit from form */
     const handleExit = async () => {
-        // שליחת בקשה לשחרר את התור אם המשתמש יצא מהטופס
-        const data = await fetchResetAppointment(date, time);
-        onClose(); // סגירת המודל לאחר יציאה
+        // If the time has not passed, send a request to reset the appointment.
+        if (!isTimeExpired) {
+            await fetchResetAppointment(date, time);
+        }
+
+        onClose();
     };
+
 
     const formatTimeLeft = (time) => {
         const minutes = Math.floor(time / 60);
@@ -198,3 +198,6 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
 };
 
 export default Registration;
+
+
+// todo להוסיף את ההתנהגות הבאה - אם עברו חמש דק וסגרנו את הטופס אז לא תשלח בקשת fetch
