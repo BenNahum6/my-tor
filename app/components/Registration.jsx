@@ -13,7 +13,7 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
 
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [timer, setTimer] = useState(null); // ניהול הטיימר
-    const [timeLeft, setTimeLeft] = useState(timeInSec); // 5 דקות בשניות
+    const [timeLeft, setTimeLeft] = useState(timeInSec); // 3 דקות בשניות
     const [isTimeExpired, setIsTimeExpired] = useState(false); // מצב אם הזמן עבר
 
     // Detect system theme (dark or light)
@@ -106,6 +106,8 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
         if (!isTimeExpired) {
             await fetchResetAppointment(date, time);
         }
+
+        window.location.reload();
 
         onClose();
     };

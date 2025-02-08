@@ -16,6 +16,7 @@ export async function POST(req) {
                 firstName: null, // מאפס את השם לפריט null או הערך הדפולטי שלך
                 lastName: null,  // מאפס את שם המשפחה לפריט null או הערך הדפולטי שלך
                 phoneNumber: null,     // מאפס את מספר הטלפון או כל שדה אחר שיש לך בטבלה
+                unlock_time: null,
             })
             .eq('date', date)
             .eq('time', timeWithZone)
