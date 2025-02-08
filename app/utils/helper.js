@@ -18,17 +18,14 @@ export const formatAppointmentTimes = (appointments) => {
         : [];
 };
 
-export const getFutureTimeFormatted = (x) => {
+/* Gets the current time and returns it plus minutes To Add */
+export const getFutureTimeFormatted = (minutesToAdd) => {
     const now = new Date();
-    now.setMinutes(now.getMinutes() + x); // הוספת X דקות
+    now.setMinutes(now.getMinutes() + minutesToAdd);
 
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
 
-    return `${hours}:${minutes}:${seconds}`; // מחזיר בפורמט HH:MM:SS
+    return `${hours}:${minutes}:${seconds}`; // HH:MM:SS
 };
-
-
-
-

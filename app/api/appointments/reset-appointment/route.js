@@ -2,25 +2,24 @@ import { supabase } from '@/app/lib/supabase';
 
 export async function POST(req) {
     try {
-        const { date, time } = await req.json(); // קריאה לנתונים מה-body ולא מה-URL
-        const timeWithZone = time + ':00+02'; // פורמט HH:MM:SS+timeZone
+        const { date, time } = await req.json();
+        const timeWithZone = time + ':00+02';
 
         console.log('making-appointment - Date:', date, 'Time:', timeWithZone);
 
-        // עדכון הנתונים לשדות הדפולטים
         const { data, error } = await supabase
             .from('calendar')
             .update({
-                locked: false, // מאפס את ה-"locked" לשדה הדפולטי (אם הוא לא היה true קודם)
-                available: true, // מאפס את ה-"available" לערך הדפולטי (אם הוא לא היה true קודם)
-                firstName: null, // מאפס את השם לפריט null או הערך הדפולטי שלך
-                lastName: null,  // מאפס את שם המשפחה לפריט null או הערך הדפולטי שלך
-                phoneNumber: null,     // מאפס את מספר הטלפון או כל שדה אחר שיש לך בטבלה
+                locked: false,
+                available: true,
+                firstName: null,
+                lastName: null,
+                phoneNumber: null,
                 unlock_time: null,
             })
             .eq('date', date)
             .eq('time', timeWithZone)
-            .select('*'); // הוצאה של כל הנתונים הרלוונטיים
+            .select('*');
 
         if (error) {
             console.error('Error resetting appointment:', error);
