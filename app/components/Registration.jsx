@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { formatDate } from "@/app/utils/helper";
-import {fetchResetAppointment, fetchSetAppointment, fetchSpecificAppointment} from "@/app/lib/api";
+import { fetchResetAppointment, fetchSetAppointment, fetchSpecificAppointment } from "@/app/lib/api";
 
 const Registration = ({ date, time, onClose, onTimeout }) => {
     const formattedDate = formatDate(date);
-    const timeInSec = 3;
+    const timeInSec = 3 * 60; // The time remaining is displayed to the user.
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -12,9 +12,9 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
     });
 
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [timer, setTimer] = useState(null); // ניהול הטיימר
-    const [timeLeft, setTimeLeft] = useState(timeInSec); // 3 דקות בשניות
-    const [isTimeExpired, setIsTimeExpired] = useState(false); // מצב אם הזמן עבר
+    const [timer, setTimer] = useState(null); // Timer management
+    const [timeLeft, setTimeLeft] = useState(timeInSec);
+    const [isTimeExpired, setIsTimeExpired] = useState(false);
 
     // Detect system theme (dark or light)
     useEffect(() => {
@@ -27,22 +27,12 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
 
         mediaQuery.addEventListener('change', handleThemeChange);
 
-        // הפעלת הטיימר כשהמשתמש נכנס לטופס
-        startTimer();
-
-        return () => {
-            mediaQuery.removeEventListener('change', handleThemeChange);
-            clearTimeout(timer); // עצירת הטיימר אם הקומפוננטה מתפנה
-        };
-    }, []);
-
-    const startTimer = () => {
+        // Starting the timer when the user enters the form
         const timeoutId = setInterval(() => {
             setTimeLeft((prevTime) => {
                 if (prevTime <= 1) {
                     clearInterval(timeoutId);
-                    setIsTimeExpired(true); // הזמן עבר
-                    // onTimeout(); // קריאה לפונקציה שתשחרר את התור לאחר 5 דקות
+                    setIsTimeExpired(true);
                     return 0;
                 }
                 return prevTime - 1;
@@ -50,7 +40,12 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
         }, 1000);
 
         setTimer(timeoutId);
-    };
+
+        return () => {
+            mediaQuery.removeEventListener('change', handleThemeChange);
+            clearInterval(timeoutId); // Stop the timer if the component becomes free
+        };
+    }, []);
 
     const stopTimer = () => {
         clearInterval(timer);
@@ -69,13 +64,13 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
             return;
         }
 
-        // בדיקת שדות חובה
+        // Required fields check
         if (!formData.firstName || !formData.lastName || !formData.phone) {
             alert('כל השדות הם חובה!');
             return;
         }
 
-        // בדיקות תקינות עבור שם פרטי, שם משפחה ומספר טלפון
+        // Validity checks for first name, last name, and phone number
         const nameRegex = /^[a-zA-Z]+$/;
         const phoneRegex = /^05\d{8}$/; // Format 05XXXXXXXX
 
@@ -96,8 +91,8 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
 
         const data = await fetchSetAppointment(date, time, formData.firstName, formData.lastName, formData.phone);
 
-        stopTimer(); // אם המשתמש שלח את הנתונים, נעצור את הטיימר
-        onClose(); // סגירת המודל לאחר שליחה
+        stopTimer(); // If the user has submitted the data, we will stop the timer
+        onClose(); // Closing the model after submission
     };
 
     /* Handles exit from form */
@@ -111,7 +106,6 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
 
         onClose();
     };
-
 
     const formatTimeLeft = (time) => {
         const minutes = Math.floor(time / 60);
@@ -174,7 +168,7 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
                 </div>
                 <button
                     type="submit"
-                    disabled={timeLeft <= 0} // מניעת שליחה אחרי חמש דקות
+                    disabled={timeLeft <= 0} // Prevent sending after 3 minutes
                     className={`w-full py-2 rounded ${isDarkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'} ${timeLeft <= 0 ? 'bg-gray-400 cursor-not-allowed' : ''}`}
                 >
                     Submit
@@ -200,6 +194,3 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
 };
 
 export default Registration;
-
-
-// todo להוסיף את ההתנהגות הבאה - אם עברו חמש דק וסגרנו את הטופס אז לא תשלח בקשת fetch
