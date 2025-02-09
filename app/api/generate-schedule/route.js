@@ -147,85 +147,90 @@
 
 import { supabase } from '../../lib/supabase';
 
-/* יצירת תאריכים ושעות */
+/* Creating dates and times */
 const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) => {
     const appointments = [];
     const now = new Date();
 
+    // Creating the dates and times for the coming week
     for (let i = 0; i < daysAhead; i++) {
         const day = new Date(now);
-        day.setDate(now.getDate() + i);
+        day.setDate(now.getDate() + i); // Adding another day
 
-        if (day.getDay() === 6) continue;
-        let endTime = day.getDay() === 5 ? 14.5 : endHour;
-
-        for (let hour = startHour; hour < endTime; hour++) {
-            for (let minute = 0; minute < 60; minute += intervalMinutes) {
-                const time = new Date(day);
-                time.setHours(hour);
-                time.setMinutes(minute);
-                const timeString = `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}:00+02`;
-                appointments.push({ date: day.toISOString().split('T')[0], time: timeString });
-            }
-        }
-    }
-    return appointments;
-};
-
-/* בדיקה האם התור כבר קיים */
-const checkIfAppointmentExists = async (table, date, time) => {
-    const { data, error } = await supabase.from(table).select('*').eq('date', date).eq('time', time);
-    if (error) {
-        console.error(`Error checking appointment in ${table}:`, error.message);
-        return false;
-    }
-    return data.length > 0;
-};
-
-/* מחיקת תורים ישנים לכל טבלה בנפרד */
-const deletePreviousDayAppointmentsForTable = async (table) => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const dateStr = yesterday.toISOString().split('T')[0];
-
-    const { error } = await supabase.from(table).delete().eq('date', dateStr);
-    if (error) {
-        console.error(`Error deleting old appointments from ${table}:`, error.message);
-    } else {
-        console.log(`Deleted old appointments from ${table} for ${dateStr}`);
-    }
-};
-
-/* הכנסת תורים חדשים לכל טבלה בנפרד */
-const insertAppointmentsToTable = async (appointments, table) => {
-    await deletePreviousDayAppointmentsForTable(table);
-
-    for (const appointment of appointments) {
-        const exists = await checkIfAppointmentExists(table, appointment.date, appointment.time);
-        if (exists) {
-            console.log(`Appointment already exists in ${table} for ${appointment.date} at ${appointment.time}`);
+        // Check if it's Saturday (day 6)
+        if (day.getDay() === 6) {
+            // Skip Saturdays
             continue;
         }
 
-        const { error } = await supabase.from(table).insert([{ date: appointment.date, time: appointment.time, available: true }]);
-        if (error) {
-            console.error(`Error inserting appointment in ${table}:`, error.message);
-        } else {
-            console.log(`Appointment added successfully to ${table}`);
+        // Check if it's Friday (day 5)
+        let endTime = endHour;
+        if (day.getDay() === 5) {
+            // On Friday, appointments will only be until 14:00 (2 PM)
+            endTime = 14.5;
+        }
+
+        // Create appointments for each day between 9:00 and the appropriate end time
+        for (let hour = startHour; hour < endTime; hour++) {
+            for (let minute = 0; minute < 60; minute += intervalMinutes) {
+                const time = new Date(day);
+                time.setHours(hour); // Set hour for local time (Israel)
+                time.setMinutes(minute); // Set minutes to the fixed interval (9:00, 9:30, etc.)
+
+                const hours = time.getHours().toString().padStart(2, '0');
+                const minutes = time.getMinutes().toString().padStart(2, '0');
+                const timeString = `${hours}:${minutes}:00+02`; // Adding +02 for Israel time zone
+
+                appointments.push({
+                    date: time.toISOString().split('T')[0], // Save the date in ISO format
+                    time: timeString, // Saving time in timetz format
+                });
+            }
+        }
+    }
+
+    return appointments;
+};
+
+/* Insert appointments into all tables */
+const insertAppointmentsToDb = async (appointments) => {
+    const tables = ['Bibi', 'Itamar', 'Michael', 'Kahana']; // List of all tables to handle
+
+    for (let table of tables) {
+        // Delete existing appointments from the table
+        const { error: deleteError } = await supabase
+            .from(table)
+            .delete()
+            .lt('date', new Date().toISOString().split('T')[0]); // Deletes all appointments before today
+
+        if (deleteError) {
+            console.error(`Error deleting appointments from ${table}:`, deleteError.message);
+            continue;
+        }
+
+        // Insert new appointments into the table
+        for (const appointment of appointments) {
+            const { error: insertError } = await supabase
+                .from(table)
+                .insert([{
+                    date: appointment.date,
+                    time: appointment.time,
+                    available: true // Marking appointment as available
+                }]);
+
+            if (insertError) {
+                console.error(`Error inserting appointment into ${table}:`, insertError.message);
+            }
         }
     }
 };
 
+/* Main function to insert appointments into all tables */
 export async function POST(req) {
     try {
-        const tables = ['calendar', 'schedule', 'availability']; // התאמה לשמות הטבלאות ב-DB
-        const appointments = generateDatesAndTimes(7, 9, 21, 30);
-
-        for (const table of tables) {
-            await insertAppointmentsToTable(appointments, table);
-        }
-
-        return new Response('Appointments generated and inserted successfully in all tables.', { status: 200 });
+        const appointments = generateDatesAndTimes(7, 9, 21, 30); // Create appointments for the week with 30 min intervals
+        await insertAppointmentsToDb(appointments); // Insert appointments into all tables
+        return new Response('Appointments generated and inserted successfully.', { status: 200 });
     } catch (error) {
         return new Response('Error generating appointments: ' + error.message, { status: 500 });
     }
