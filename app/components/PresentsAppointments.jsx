@@ -4,7 +4,7 @@ import Registration from './Registration';
 import { formatDate, formatAppointmentTimes } from '../utils/helper';
 import { fetchSpecificAppointment } from '../lib/api';
 
-const PresentsAppointments = ({ date, data }) => {
+const PresentsAppointments = ({slug, date, data }) => {
     const [showRegistration, setShowRegistration] = useState(false);
     const [selectedDetails, setSelectedDetails] = useState({});
     const formattedDate = formatDate(date);
@@ -15,7 +15,7 @@ const PresentsAppointments = ({ date, data }) => {
 
     const handleAppointmentClick = async (date, time) => {
         try {
-            const data = await fetchSpecificAppointment(date, time);
+            const data = await fetchSpecificAppointment(slug, date, time);
             // console.log("data from fetchSpecificAppointment: ", data);
 
             if (data.locked && data.data[0].available) {
@@ -58,6 +58,7 @@ const PresentsAppointments = ({ date, data }) => {
             {showRegistration && (
                 <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
                     <Registration
+                        slug={slug}
                         date={selectedDetails.date}
                         time={selectedDetails.time}
                         onClose={() => setShowRegistration(false)} // Window close button

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { formatDate } from "@/app/utils/helper";
 import { fetchResetAppointment, fetchSetAppointment } from "@/app/lib/api";
 
-const Registration = ({ date, time, onClose, onTimeout }) => {
+const Registration = ({ slug, date, time, onClose, onTimeout }) => {
     const formattedDate = formatDate(date);
     const timeInSec = 3 * 60; // הזמן שנותר מוצג למשתמש.
     const [formData, setFormData] = useState({
@@ -106,7 +106,7 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
             return;
         }
 
-        const data = await fetchSetAppointment(date, time, formData.firstName, formData.lastName, formData.phone);
+        const data = await fetchSetAppointment(slug, date, time, formData.firstName, formData.lastName, formData.phone);
 
         stopTimer(); // אם המשתמש הגיש את הנתונים, נעצור את הטיימר
         onClose(); // סגירת המודל אחרי שליחת הנתונים
@@ -116,7 +116,7 @@ const Registration = ({ date, time, onClose, onTimeout }) => {
     const handleExit = async () => {
         // אם הזמן לא עבר, שולחים בקשה לאיפוס התור
         if (!isTimeExpired) {
-            await fetchResetAppointment(date, time);
+            await fetchResetAppointment(slug, date, time);
         }
 
         window.location.reload();

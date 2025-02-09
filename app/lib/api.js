@@ -1,5 +1,5 @@
 /* fetch all available appointment in specific data */
-export const fetchAvailableAppointments = async (date) => {
+export const fetchAvailableAppointments = async (slug, date) => {
     const apiUrl = process.env.NODE_ENV === 'production'
         ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/getAllAvailableAppointments`
         : 'http://localhost:3000/api/appointments/getAllAvailableAppointments';
@@ -14,7 +14,7 @@ export const fetchAvailableAppointments = async (date) => {
                 'Pragma': 'no-cache',
                 'Expires': '0',
             },
-            body: JSON.stringify({ date: date }),
+            body: JSON.stringify({ slug: slug, date: date }),
         });
 
         if (!response.ok) {
@@ -31,7 +31,7 @@ export const fetchAvailableAppointments = async (date) => {
 };
 
 /* fetch available appointment in specific data & time */
-export const fetchSpecificAppointment = async (date, time) => {
+export const fetchSpecificAppointment = async (slug, date, time) => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/making-appointment`
@@ -47,6 +47,7 @@ export const fetchSpecificAppointment = async (date, time) => {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
             },
             body: JSON.stringify({
+                slug,
                 date,
                 time,
             }),
@@ -66,7 +67,7 @@ export const fetchSpecificAppointment = async (date, time) => {
 };
 
 /* fetch reset specific appointment */
-export const fetchResetAppointment = async (date, time) => {
+export const fetchResetAppointment = async (slug, date, time) => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/reset-appointment`
@@ -80,6 +81,7 @@ export const fetchResetAppointment = async (date, time) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                slug: slug,
                 date: date,
                 time: time,
             }),
@@ -97,7 +99,7 @@ export const fetchResetAppointment = async (date, time) => {
 };
 
 /* fetch set specific appointment */
-export const fetchSetAppointment = async (date, time, firstName, lastName, phone) => {
+export const fetchSetAppointment = async (slug, date, time, firstName, lastName, phone) => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/set-appointment`
@@ -111,6 +113,7 @@ export const fetchSetAppointment = async (date, time, firstName, lastName, phone
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                slug: slug,
                 date: date,
                 time: time,
                 firstName: firstName,
@@ -130,4 +133,3 @@ export const fetchSetAppointment = async (date, time, firstName, lastName, phone
         console.log('Error submitting form:', error);
     }
 };
-

@@ -7,11 +7,11 @@ export const runtime = 'edge';
 export async function POST(req) {
         try {
                 // Receives the data sent in the request (date)
-                const { date } = await req.json();
+                const { slug, date } = await req.json();
 
                 // Request to DB to find available appointments
                 const { data, error } = await supabase
-                    .from('calendar')
+                    .from(slug)
                     .select('date, time, available, locked')
                     .eq('date', date)
                     .eq('available', true)
