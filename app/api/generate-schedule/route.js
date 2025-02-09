@@ -197,7 +197,7 @@ const insertAppointmentsToDb = async (appointments) => {
     const tables = ['Bibi', 'Itamar', 'Michael', 'Kahana']; // List of all tables to handle
 
     for (let table of tables) {
-        // Delete existing appointments from the table
+        // Delete existing appointments from the table (before today)
         const { error: deleteError } = await supabase
             .from(table)
             .delete()
@@ -208,18 +208,35 @@ const insertAppointmentsToDb = async (appointments) => {
             continue;
         }
 
-        // Insert new appointments into the table
+        // Insert new appointments into the table (if not already existing)
         for (const appointment of appointments) {
-            const { error: insertError } = await supabase
+            // Check if the appointment already exists in the table
+            const { data: existingAppointments, error: selectError } = await supabase
                 .from(table)
-                .insert([{
-                    date: appointment.date,
-                    time: appointment.time,
-                    available: true // Marking appointment as available
-                }]);
+                .select('date, time')
+                .eq('date', appointment.date)
+                .eq('time', appointment.time);
 
-            if (insertError) {
-                console.error(`Error inserting appointment into ${table}:`, insertError.message);
+            if (selectError) {
+                console.error(`Error checking existing appointments in ${table}:`, selectError.message);
+                continue;
+            }
+
+            // If the appointment already exists, skip it
+            if (existingAppointments.length === 0) {
+                const { error: insertError } = await supabase
+                    .from(table)
+                    .insert([{
+                        date: appointment.date,
+                        time: appointment.time,
+                        available: true // Marking appointment as available
+                    }]);
+
+                if (insertError) {
+                    console.error(`Error inserting appointment into ${table}:`, insertError.message);
+                }
+            } else {
+                console.log(`Appointment already exists for ${appointment.date} at ${appointment.time}, skipping.`);
             }
         }
     }
