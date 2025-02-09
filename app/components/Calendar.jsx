@@ -46,7 +46,7 @@ function Calendar() {
       const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
       // Navigation with the dynamic date
-      router.push(`/pages/${slug}/available-appointments/${dateString}`);
+      router.push(`/pages/${slug}/calendar/${dateString}`);
 
     }
   };
