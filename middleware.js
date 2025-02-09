@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
+
 /* Checks if the slug in the URL is correct */
 function validateSlug(req) {
     const { pathname } = req.nextUrl;
-    console.log("Middleware is running!");
-    console.log("Pathname:", pathname);
+    // console.log("Middleware is running!");
+    // console.log("Pathname:", pathname);
 
     if (!pathname.startsWith('/pages/')) {
         console.log("Path does not match criteria, proceeding...");
@@ -12,8 +13,6 @@ function validateSlug(req) {
 
     const parts = pathname.split('/');
     const slug = parts[2];
-
-    console.log("Extracted slug:", slug);
 
     const allowedSlugs = ['Bibi', 'Itamar', 'Kahana', 'Michael'];
 
