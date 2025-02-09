@@ -7,21 +7,20 @@ const supabaseAnonserviceKey = process.env.NEXT_PRIVATE_SUPABASE_SERVICE_KEY;
 export const supabase = createClient(supabaseUrl, supabaseAnonserviceKey);
 
 /*Check if the database connection exists*/
-const fetchAppointments = async () => {
-    try {
-        const { data, error } = await supabase
-            .from('calendar')
-            .select('*');
-
-        if (error) {
-            console.error('Error fetching generate-schedule:', error.message); // Show the error message with details
-            return;
-        }
-        // console.log('Appointments fetched successfully:', data);
-        console.log('Appointments fetched successfully: data');
-    } catch (err) {
-        console.error('Unexpected error:', err.message); // Handling unexpected errors
-    }
-};
-
-fetchAppointments();
+// const fetchAppointments = async () => {
+//     try {
+//         const { data, error } = await supabase
+//             .from('calendar')
+//             .select('*');
+//
+//         if (error) {
+//             console.error('Error fetching generate-schedule:', error.message); // Show the error message with details
+//             return;
+//         }
+//         // console.log('Appointments fetched successfully:', data);
+//         console.log('Appointments fetched successfully: data');
+//     } catch (err) {
+//     }
+// };
+//
+// fetchAppointments();

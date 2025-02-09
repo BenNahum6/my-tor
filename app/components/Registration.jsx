@@ -34,6 +34,12 @@ const Registration = ({ slug, date, time, onClose, onTimeout }) => {
 
         mediaQuery.addEventListener('change', handleThemeChange);
 
+        // קבלת הזמן שנשאר מה- localStorage אם קיים
+        const savedTimeLeft = localStorage.getItem('timeLeft');
+        if (savedTimeLeft) {
+            setTimeLeft(Number(savedTimeLeft));
+        }
+
         // התחל את הטיימר כשהמשתמש נכנס לטופס
         const timeoutId = setInterval(() => {
             setTimeLeft((prevTime) => {
@@ -53,6 +59,11 @@ const Registration = ({ slug, date, time, onClose, onTimeout }) => {
             clearInterval(timeoutId); // עצירת הטיימר אם הרכיב לא נמצא
         };
     }, []);
+
+    useEffect(() => {
+        // כל פעם שמשתנה הזמן שנותר, נשמור אותו ב-localStorage
+        localStorage.setItem('timeLeft', timeLeft);
+    }, [timeLeft]);
 
     const stopTimer = () => {
         clearInterval(timer);
@@ -119,7 +130,8 @@ const Registration = ({ slug, date, time, onClose, onTimeout }) => {
             await fetchResetAppointment(slug, date, time);
         }
 
-        window.location.reload();
+        // נקה את ה-localStorage כשעוזבים את הטופס
+        localStorage.removeItem('timeLeft');
 
         onClose();
     };

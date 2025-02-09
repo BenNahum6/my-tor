@@ -12,7 +12,7 @@ export async function POST(req) {
         // console.log('making-appointment - Date:', date, 'Time:', timeWithZone);
 
         const unlockTimeFormatted = getFutureTimeFormatted(3);
-
+        console.log("the slug is: ", slug)
         const { data, error } = await supabase
             .from(slug)
             .update({
