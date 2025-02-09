@@ -2,11 +2,11 @@ import { supabase } from '@/app/lib/supabase';
 
 export async function POST(req) {
     try {
-        const { date, time, firstName, lastName, phone } = await req.json(); // Reading data from the body
+        const { slug , date, time, firstName, lastName, phone } = await req.json(); // Reading data from the body
         const timeWithZone = time + ':00+02'; // HH:MM:SS+timeZone
 
         const { data, error } = await supabase
-            .from('calendar')
+            .from(slug)
             .update({
                 firstName: firstName,
                 lastName: lastName,

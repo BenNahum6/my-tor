@@ -6,7 +6,7 @@ import {getFutureTimeFormatted} from "@/app/utils/helper";
 /* Locks the appointment for a predefined time */
 export async function POST(req) {
     try {
-        const { date, time } = await req.json();
+        const { slug, date, time } = await req.json();
         const timeWithZone = time + ':00+02'; // HH:MM:SS+timeZone
 
         // console.log('making-appointment - Date:', date, 'Time:', timeWithZone);
@@ -14,7 +14,7 @@ export async function POST(req) {
         const unlockTimeFormatted = getFutureTimeFormatted(3);
 
         const { data, error } = await supabase
-            .from('calendar')
+            .from(slug)
             .update({
                 locked: true,
                 unlock_time: unlockTimeFormatted

@@ -4,10 +4,10 @@ import { fetchAvailableAppointments } from "@/app/lib/api"; // ייבוא הפו
 
 // הפונקציה בצד השרת
 export default async function AvailableAppointments({ params }) {
-    const { date } = params;
+    const { slug, date } = params;
 
     // קריאה ל-API כדי להחזיר את הנתונים
-    const timeData = await fetchAvailableAppointments(date);
+    const timeData = await fetchAvailableAppointments(slug, date);
 
     if (!timeData) {
         return <div>Loading...</div>;
@@ -17,7 +17,7 @@ export default async function AvailableAppointments({ params }) {
         <div>
             <Navbar />
             {/* שולח את הנתונים שנאספו */}
-            <PresentsAppointments date={date} data={timeData} />
+            <PresentsAppointments slug={slug} date={date} data={timeData} />
         </div>
     );
 }

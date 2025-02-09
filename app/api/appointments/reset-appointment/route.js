@@ -2,13 +2,13 @@ import { supabase } from '@/app/lib/supabase';
 
 export async function POST(req) {
     try {
-        const { date, time } = await req.json();
+        const { slug, date, time } = await req.json();
         const timeWithZone = time + ':00+02';
 
         console.log('making-appointment - Date:', date, 'Time:', timeWithZone);
 
         const { data, error } = await supabase
-            .from('calendar')
+            .from(slug)
             .update({
                 locked: false,
                 available: true,
