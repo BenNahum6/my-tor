@@ -199,7 +199,7 @@ const insertAppointmentsToDb = async (appointments) => {
     for (let table of tables) {
         // Delete existing appointments from the table (before today)
         const { error: deleteError } = await supabase
-            .from(table)
+            .from(table) // Access the correct table
             .delete()
             .lt('date', new Date().toISOString().split('T')[0]); // Deletes all appointments before today
 
@@ -210,9 +210,9 @@ const insertAppointmentsToDb = async (appointments) => {
 
         // Insert new appointments into the table (if not already existing)
         for (const appointment of appointments) {
-            // Check if the appointment already exists in the table
+            // Check if the appointment already exists in the current table
             const { data: existingAppointments, error: selectError } = await supabase
-                .from(table)
+                .from(table) // Access the correct table
                 .select('date, time')
                 .eq('date', appointment.date)
                 .eq('time', appointment.time);
@@ -225,7 +225,7 @@ const insertAppointmentsToDb = async (appointments) => {
             // If the appointment already exists, skip it
             if (existingAppointments.length === 0) {
                 const { error: insertError } = await supabase
-                    .from(table)
+                    .from(table) // Access the correct table
                     .insert([{
                         date: appointment.date,
                         time: appointment.time,
