@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-
+/* Checks if the slug in the URL is correct */
 function validateSlug(req) {
     const { pathname } = req.nextUrl;
     console.log("Middleware is running!");
