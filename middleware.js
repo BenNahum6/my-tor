@@ -6,7 +6,7 @@ function validateSlug(req) {
     console.log("Pathname:", pathname);
 
     if (!pathname.startsWith('/pages/')) {
-        console.log("🔄 Path does not match criteria, proceeding...");
+        console.log("Path does not match criteria, proceeding...");
         return NextResponse.next();
     }
 
@@ -22,7 +22,7 @@ function validateSlug(req) {
         return NextResponse.redirect(new URL('/404', req.url));
     }
 
-    console.log("✅ Valid slug, proceeding...");
+    console.log("Valid slug, proceeding...");
     return NextResponse.next();
 }
 
