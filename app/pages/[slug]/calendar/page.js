@@ -1,5 +1,5 @@
 import Navbar from "@/app/components/Navbar";
-import AppointmentType from "@/app/components/AppointmentType";
+import Calendar from "@/app/components/Calendar";
 
 export default function works(){
 
@@ -7,7 +7,7 @@ export default function works(){
         <>
             <Navbar />
             <div className="mt-24">
-                <AppointmentType/>
+                <Calendar/>
             </div>
         </>
     );

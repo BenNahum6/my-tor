@@ -2,7 +2,7 @@ import Image from "next/image";
 import Workers from "./components/Workers";
 import Navbar from "./components/Navbar";
 
-let businessName = "ben";
+let businessName = "Best barber Shop";
 
 export default function Home() {
   return (
