@@ -19,8 +19,7 @@ const PresentsAppointments = ({ date }) => {
     console.log("slug: ", slug)
 
     const handleServiceClick = (service) => {
-        setSelectedService(service); // שמירה ב-state
-        // עדכון הנתיב כך שיכלול את ה-slug
+        setSelectedService(service);
         router.push(`/pages/${slug}/calendar`);
     };
 
