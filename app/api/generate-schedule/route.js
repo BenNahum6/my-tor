@@ -194,7 +194,7 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
 
 /* Insert appointments into all tables */
 const insertAppointmentsToDb = async (appointments) => {
-    const tables = ['calendar', 'Bibi', 'Itamar']; // List of all tables to handle
+    const tables = ['Bibi', 'Itamar', 'Michael', 'Kahana']; // List of all tables to handle
 
     for (let table of tables) {
         // Delete existing appointments from the table
