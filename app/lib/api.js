@@ -37,7 +37,7 @@ export const fetchSpecificAppointment = async (slug, date, time) => {
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/making-appointment`
             : `http://localhost:3000/api/appointments/making-appointment`;
 
-        console.log("API URL:", apiUrl);
+        // console.log("API URL:", apiUrl);
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -105,7 +105,7 @@ export const fetchSetAppointment = async (slug, date, time, firstName, lastName,
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/set-appointment`
             : `http://localhost:3000/api/appointments/set-appointment`;
 
-        console.log("API URL:", apiUrl);
+        // console.log("API URL:", apiUrl);
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -119,7 +119,7 @@ export const fetchSetAppointment = async (slug, date, time, firstName, lastName,
                 firstName: firstName,
                 lastName: lastName,
                 phone: phone,
-                available: false // עדכון שדה available ל-false
+                available: false
             }),
         });
 
@@ -131,5 +131,67 @@ export const fetchSetAppointment = async (slug, date, time, firstName, lastName,
         }
     } catch (error) {
         console.log('Error submitting form:', error);
+    }
+};
+
+/* Creates a new user based on the fact that their email exists in the DB */
+export const fetchSignUp = async (email, fullName, password) => {
+
+    try {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/login/sign-in`
+            : `http://localhost:3000/api/login/sign-up`;
+
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: email,
+                fullName: fullName,
+                password: password }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to sign up");
+        }
+
+        return { success: true, data };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+};
+
+/* Check if the email and password are correct */
+export const fetchSignIn = async (email, password) => {
+    try {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/login/sign-in`
+            : `http://localhost:3000/api/login/sign-in`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+            }),
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            return { success: false, status: response.status, message: responseData.message || "Login failed" };
+        }
+
+        return { success: true, status: response.status, data: responseData };
+
+    } catch (error) {
+        return { success: false, status: 500, message: "Server error: " + error.message };
     }
 };
