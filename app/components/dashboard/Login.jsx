@@ -71,7 +71,7 @@ export default function Login() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                     <input
                         type="email"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-gray-900" // טקסט כהה יותר
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-gray-900"
                         placeholder="your@email.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -81,8 +81,8 @@ export default function Login() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                     <div className="relative">
                         <input
-                            type={showPassword ? "text" : "password"} // הראה או הסתר את הסיסמה
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-gray-900" // טקסט כהה יותר
+                            type={showPassword ? "text" : "password"}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-gray-900"
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
