@@ -136,7 +136,6 @@ export const fetchSetAppointment = async (slug, date, time, firstName, lastName,
 
 /* Creates a new user based on the fact that their email exists in the DB */
 export const fetchSignUp = async (email, fullName, password) => {
-
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/login/sign-in`
@@ -155,7 +154,7 @@ export const fetchSignUp = async (email, fullName, password) => {
 
         const data = await response.json();
 
-        if (!response.ok) {
+        if (!data.success) {
             throw new Error(data.message || "Failed to sign up");
         }
 

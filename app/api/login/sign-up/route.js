@@ -9,11 +9,11 @@ export async function POST(req) {
     try {
         const { email, password, fullName } = await req.json();
 
-        //  Password encryption with bcryptjs (nodejs compatible)
+        // Password encryption with bcryptjs (nodejs compatible)
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('Users')
             .update({
                 fullName: fullName,
@@ -21,7 +21,8 @@ export async function POST(req) {
                 exists: true,
             })
             .eq('email', email)
-            .eq('exists', false);
+            .eq('exists', false)
+            .select();
 
         if (error) {
             console.error('Error updating user:', error);
@@ -29,6 +30,15 @@ export async function POST(req) {
                 { success: false, error: 'Error updating user' },
                 { status: 500 }
             );
+        }
+
+        // Check if an update has not been performed
+        if (data.length === 0) {
+            console.log('No rows were updated, because exists was already true');
+            return NextResponse.json({
+                success: false,
+                error: 'No rows were updated because exists was already true',
+            });
         }
 
         return NextResponse.json({
