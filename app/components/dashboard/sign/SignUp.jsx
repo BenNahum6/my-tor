@@ -35,11 +35,13 @@ export default function SignUp({ toggleSignUp }) {
 
         setError(""); // If all tests pass, we will clear the error.
 
-        try {// ניסיון לבצע התחברות
+        try {
+            // Attempting to connect
             const logIn = await fetchSignUp(email, username, password);
 
             if (logIn.success) {
-                alert('workssssss')
+                alert('Account activated successfully !');
+                toggleSignUp(false);
             } else {
                 // הצגת שגיאה ב-Popup
                 setError(logIn.message || "Invalid details.");
