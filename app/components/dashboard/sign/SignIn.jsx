@@ -114,10 +114,10 @@ export default function SignIn({ toggleSignUp }) {
             <div className="mt-6 text-center text-sm text-gray-600">
                 Dont have an account?
                 <a
-                    className="text-indigo-600 hover:text-indigo-500 font-medium ml-2"
+                    className="text-indigo-600 hover:text-indigo-400 font-medium ml-2"
                     onClick={() => toggleSignUp(true)}
                 >
-                    Sign up
+                    Account activation
                 </a>
             </div>
         </>

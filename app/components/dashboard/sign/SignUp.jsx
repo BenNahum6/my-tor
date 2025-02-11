@@ -54,9 +54,10 @@ export default function SignUp({ toggleSignUp }) {
 
     return (
         <>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Create an Account</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Activate account</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                     <input
                         type="email"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-gray-900"
@@ -66,35 +67,39 @@ export default function SignUp({ toggleSignUp }) {
                     />
                 </div>
                 <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
                     <input
                         type="text"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-gray-900"
-                        placeholder="full name"
+                        placeholder="John Doe"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
                 </div>
-                <div className="relative">
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-gray-900"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-2 text-gray-600"
-                    >
-                        {showPassword ? "Hide" : "Show"}
-                    </button>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <div className="relative">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-gray-900"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-2 text-gray-600"
+                        >
+                            {showPassword ? "Hide" : "Show"}
+                        </button>
+                    </div>
                 </div>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
                 <div className="mt-10">
                     <input
                         type="submit"
-                        value="Sign up"
+                        value="Activate"
                         className="py-3 bg-green-500 text-white w-full rounded hover:bg-green-600"
                     />
                 </div>
@@ -102,7 +107,7 @@ export default function SignUp({ toggleSignUp }) {
             <div className="mt-6 text-center text-sm text-gray-600">
                 Already have an account?
                 <a
-                    className="text-gray-600 hover:text-green-400 font-medium ml-2"
+                    className="text-green-600 hover:text-green-400 font-medium ml-2"
                     onClick={() => toggleSignUp(false)}
                 >
                     Sign in
