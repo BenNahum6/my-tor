@@ -184,7 +184,7 @@ export const fetchSignIn = async (email, password) => {
 
         const responseData = await response.json();
 
-        if (!response.ok) {
+        if (!responseData.success) {
             return { success: false, status: response.status, message: responseData.message || "Login failed" };
         }
 

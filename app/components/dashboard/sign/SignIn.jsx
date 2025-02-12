@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import {validateEmail, validatePassword} from "@/app/utils/helper";
-import {fetchSignIn, fetchSingIn} from "@/app/lib/api";
+import { validateEmail, validatePassword } from "@/app/utils/helper";
+import { fetchSignIn } from "@/app/lib/api";
+import { useRouter } from "next/navigation";
 
 export default function SignIn({ toggleSignUp }) {
     const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ export default function SignIn({ toggleSignUp }) {
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const storedEmail = localStorage.getItem("email");
@@ -45,8 +47,7 @@ export default function SignIn({ toggleSignUp }) {
             const logIn = await fetchSignIn(email, password);
 
             if (logIn.success) {
-                console.log("helllllllllllo")
-                // התחברות מוצלחת – מעבר לעמוד אחר
+                router.push(`/dashboard/panel`);
             } else {
                 // הצגת שגיאה ב-Popup
                 setError(logIn.message || "Invalid email or password.");
