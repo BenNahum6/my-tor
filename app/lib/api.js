@@ -196,31 +196,23 @@ export const fetchSignIn = async (email, password) => {
 };
 
 /* Checks if token is valid */
-export const validateToken = async () => {
+export const validateToken = async (token) => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/authenticate`
             : `http://localhost:3000/api/auth/authenticate`;
 
-        // אם הטוקן נמצא בעוגיה (HttpOnly), אנחנו לא שולפים אותו ב-JS
-        const token = document.cookie.includes('jwt')
-            ? null // אם הטוקן בעוגיה, לא נשלוף אותו ב-JS
-            : sessionStorage.getItem('jwt'); // אם לא בעוגיה, נשלוף מ-sessionStorage
+        // שולחים את הבקשה עם הטוקן שנשלח לפונקציה
+        const headers = { 'Authorization': `Bearer ${token}` };
 
-        // אם לא נמצא טוקן בשום מקום, מחזירים שגיאה
-        if (!token && !document.cookie.includes('jwt')) {
-            return { success: false, status: 401, message: 'No token found' };
-        }
-
-        // שולחים בקשה לשרת כדי לבדוק את תקינות הטוקן
         const response = await fetch(apiUrl, {
             method: 'GET',
-            headers: token
-                ? { 'Authorization': `Bearer ${token}` } // אם הטוקן נמצא ב-sessionStorage, נשלח אותו ב-Authorization
-                : {}, // אם הטוקן בעוגיה (HttpOnly), לא נשלח כותרת Authorization, הוא נשלח אוטומטית עם הבקשה
+            credentials: 'include', // חובה לשלוח את העוגיות אם יש
+            headers: headers,  // שלח את ה-Headers עם הטוקן
         });
 
         const responseData = await response.json();
+        console.log(responseData)
 
         if (!response.ok) {
             return { success: false, status: response.status, message: responseData.message || 'Unauthorized' };
@@ -232,4 +224,35 @@ export const validateToken = async () => {
         return { success: false, status: 500, message: 'Server error: ' + error.message };
     }
 };
+
+/* Save token in server */
+export const saveTokenOnServer = async (token) => {
+    try {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/save-token`
+            : `http://localhost:3000/api/auth/save-token`;
+
+        // שולחים את הבקשה עם הטוקן שנשלח לפונקציה
+        const headers = { 'Authorization': `Bearer ${token}` };
+
+        const response = await fetch(apiUrl, {
+            method: 'POST', // כי אנחנו שמים את הטוקן בשרת
+            credentials: 'include', // חובה לשלוח את העוגיות
+            headers: headers, // שולחים את ה-Headers עם הטוקן
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            return { success: false, status: response.status, message: responseData.message || 'Failed to save token' };
+        }
+
+        return { success: true, status: response.status, message: 'Token saved successfully' }; // מחזירים שהטוקן נשמר
+    } catch (error) {
+        console.error('Token saving failed', error);
+        return { success: false, status: 500, message: 'Server error: ' + error.message };
+    }
+};
+
+
 
