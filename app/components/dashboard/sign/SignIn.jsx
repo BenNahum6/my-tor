@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { validateEmail, validatePassword } from "@/app/utils/helper";
-import {fetchSignIn, validateToken} from "@/app/lib/api";
+import { fetchSignIn, validateToken } from "@/app/lib/api";
 import { useRouter } from "next/navigation";
 
 export default function SignIn({ toggleSignUp }) {
@@ -32,6 +32,7 @@ export default function SignIn({ toggleSignUp }) {
         setError(""); // If all tests pass, we will clear the error.
 
         try {
+            console.log("login: ");
             // Attempting to connect
             const logIn = await fetchSignIn(email, password);
 
@@ -46,26 +47,26 @@ export default function SignIn({ toggleSignUp }) {
                     sessionStorage.setItem('email', email);
                 }
 
-                // לפני המעבר לדף, נוודא שהטוקן תקין
+                // Check token validity before proceeding
                 try {
-                    // כאן נבדוק מאיפה הטוקן מגיע: cookie או sessionStorage
-                    const token = document.cookie.includes('jwt')
-                        ? null  // אם הטוקן בעוגיה, לא נשלח אותו ב-header (הוא נשלח אוטומטית)
-                        : sessionStorage.getItem('jwt'); // אם הטוקן ב-sessionStorage, שולחים אותו ב-header
+                    const token = rememberMe
+                        ? document.cookie.includes('jwt')
+                            ? logIn.data.session.access_token  // Take token from response if 'remember me' is checked
+                            : null // Do not send token from sessionStorage if cookies were set
+                        : sessionStorage.getItem('jwt');
 
-                    const data = await validateToken(token);  // מעבירים לפונקציה את הטוקן שמצאנו
+                    // Validate token
+                    const data = await validateToken(token);
 
                     if (data?.data?.user?.role?.toLowerCase() === 'authenticated') {
-                        // אם הטוקן תקין, נבצע את המעבר לדף
                         router.push(`/dashboard/panel`);
+                    } else {
+                        setError("Invalid token or session expired.");
                     }
                 } catch (error) {
-                    // אם יש בעיה עם הטוקן (לא תקין, לא נמצא וכו'), הצג שגיאה
-                    setError('Invalid token or session expired.');
-                    // router.push(`/login`); // אפשר להפנות לדף כניסה במידה והטוקן לא תקין
+                    setError("Invalid token or session expired.");
                 }
             } else {
-                // Show error message in Popup
                 setError(logIn.message || "Invalid email or password.");
             }
 

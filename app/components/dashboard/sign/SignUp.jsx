@@ -40,7 +40,7 @@ export default function SignUp({ toggleSignUp }) {
             const logIn = await fetchSignUp(email, username, password);
 
             if (logIn.success) {
-                alert('Account activated successfully !');
+                alert('Account activated successfully !\n Confirm email access.');
                 toggleSignUp(false);
             } else {
                 // הצגת שגיאה ב-Popup
