@@ -1,7 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { validateEmail, validatePassword } from "@/app/utils/helper";
-import { fetchSignIn } from "@/app/lib/api";
+import {fetchSignIn, validateToken} from "@/app/lib/api";
 import { useRouter } from "next/navigation";
 
 export default function SignIn({ toggleSignUp }) {
@@ -11,17 +11,6 @@ export default function SignIn({ toggleSignUp }) {
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
-
-    useEffect(() => {
-        const storedEmail = localStorage.getItem("email");
-        const storedPassword = localStorage.getItem("password");
-
-        if (storedEmail && storedPassword) {
-            setEmail(storedEmail);
-            setPassword(storedPassword);
-            setRememberMe(true);
-        }
-    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -43,20 +32,46 @@ export default function SignIn({ toggleSignUp }) {
         setError(""); // If all tests pass, we will clear the error.
 
         try {
-            // ניסיון לבצע התחברות
+            // Attempting to connect
             const logIn = await fetchSignIn(email, password);
 
             if (logIn.success) {
-                router.push(`/dashboard/panel`);
+                // If the user selected Remember me, we will save the JWT in a cookie.
+                if (rememberMe) {
+                    document.cookie = `jwt=${logIn.data.session.access_token}; path=/; max-age=${60 * 60 * 24 * 7}; secure; httpOnly; SameSite=Strict`;
+                    document.cookie = `email=${email}; path=/; max-age=${60 * 60 * 24 * 7}; secure; httpOnly`;
+                } else {
+                    // If "Remember me" was not selected, we save the token in sessionStorage
+                    sessionStorage.setItem('jwt', logIn.data.session.access_token);
+                    sessionStorage.setItem('email', email);
+                }
+
+                // לפני המעבר לדף, נוודא שהטוקן תקין
+                try {
+                    // כאן נבדוק מאיפה הטוקן מגיע: cookie או sessionStorage
+                    const token = document.cookie.includes('jwt')
+                        ? null  // אם הטוקן בעוגיה, לא נשלח אותו ב-header (הוא נשלח אוטומטית)
+                        : sessionStorage.getItem('jwt'); // אם הטוקן ב-sessionStorage, שולחים אותו ב-header
+
+                    const data = await validateToken(token);  // מעבירים לפונקציה את הטוקן שמצאנו
+
+                    if (data?.data?.user?.role?.toLowerCase() === 'authenticated') {
+                        // אם הטוקן תקין, נבצע את המעבר לדף
+                        router.push(`/dashboard/panel`);
+                    }
+                } catch (error) {
+                    // אם יש בעיה עם הטוקן (לא תקין, לא נמצא וכו'), הצג שגיאה
+                    setError('Invalid token or session expired.');
+                    // router.push(`/login`); // אפשר להפנות לדף כניסה במידה והטוקן לא תקין
+                }
             } else {
-                // הצגת שגיאה ב-Popup
+                // Show error message in Popup
                 setError(logIn.message || "Invalid email or password.");
             }
 
         } catch (error) {
             setError("There was an issue with the login process. Please try again.");
         }
-
     };
 
     return (

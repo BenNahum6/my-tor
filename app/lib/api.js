@@ -138,8 +138,8 @@ export const fetchSetAppointment = async (slug, date, time, firstName, lastName,
 export const fetchSignUp = async (email, fullName, password) => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
-            ? `${process.env.NEXT_PUBLIC_API_URL}/api/login/sign-in`
-            : `http://localhost:3000/api/login/sign-up`;
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-up`
+            : `http://localhost:3000/api/auth/sign-up`;
 
         const response = await fetch(apiUrl, {
             method: "POST",
@@ -168,8 +168,8 @@ export const fetchSignUp = async (email, fullName, password) => {
 export const fetchSignIn = async (email, password) => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
-            ? `${process.env.NEXT_PUBLIC_API_URL}/api/login/sign-in`
-            : `http://localhost:3000/api/login/sign-in`;
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/login/auth/sign-in`
+            : `http://localhost:3000/api/auth/sign-in`;
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -194,3 +194,42 @@ export const fetchSignIn = async (email, password) => {
         return { success: false, status: 500, message: "Server error: " + error.message };
     }
 };
+
+/* Checks if token is valid */
+export const validateToken = async () => {
+    try {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/authenticate`
+            : `http://localhost:3000/api/auth/authenticate`;
+
+        // אם הטוקן נמצא בעוגיה (HttpOnly), אנחנו לא שולפים אותו ב-JS
+        const token = document.cookie.includes('jwt')
+            ? null // אם הטוקן בעוגיה, לא נשלוף אותו ב-JS
+            : sessionStorage.getItem('jwt'); // אם לא בעוגיה, נשלוף מ-sessionStorage
+
+        // אם לא נמצא טוקן בשום מקום, מחזירים שגיאה
+        if (!token && !document.cookie.includes('jwt')) {
+            return { success: false, status: 401, message: 'No token found' };
+        }
+
+        // שולחים בקשה לשרת כדי לבדוק את תקינות הטוקן
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: token
+                ? { 'Authorization': `Bearer ${token}` } // אם הטוקן נמצא ב-sessionStorage, נשלח אותו ב-Authorization
+                : {}, // אם הטוקן בעוגיה (HttpOnly), לא נשלח כותרת Authorization, הוא נשלח אוטומטית עם הבקשה
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            return { success: false, status: response.status, message: responseData.message || 'Unauthorized' };
+        }
+
+        return { success: true, status: response.status, data: responseData }; // מחזירים את המידע אם הטוקן תקין
+    } catch (error) {
+        console.error('Token validation failed', error);
+        return { success: false, status: 500, message: 'Server error: ' + error.message };
+    }
+};
+
