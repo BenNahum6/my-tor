@@ -168,8 +168,9 @@ export const fetchSignUp = async (email, fullName, password) => {
 export const fetchSignIn = async (email, password) => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
-            ? `${process.env.NEXT_PUBLIC_API_URL}/api/login/auth/sign-in`
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-in`
             : `http://localhost:3000/api/auth/sign-in`;
+        console.log("API URL:", apiUrl);
 
         const response = await fetch(apiUrl, {
             method: 'POST',
