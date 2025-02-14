@@ -11,16 +11,15 @@ export async function POST(req) {
         }
 
         // שמירת הטוקן בעוגיה HttpOnly
-        const cookieStore = cookies();
-        cookieStore.set('jwt', token, {
-            httpOnly: true, // מאפשר רק לשרת לגשת לעוגיה
-            // Secure: true,
-            secure: process.env.NODE_ENV === 'production', // אם ב-https אז הכנס Secure
-            sameSite: 'Strict', // מונע שליחה של העוגיה לאתרים אחרים
-            maxAge: 24 * 60 * 60 * 1000, // זמן חיים של העוגיה (למשל, 24 שעות)
+        cookies().set('jwt', token, {
+            httpOnly: true, // מונע גישה של JavaScript לעוגיה
+            secure: process.env.NODE_ENV === 'production', // ב-HTTPS חובה
+            sameSite: 'Strict', // מונע גישה מצד שלישי
+            path: '/', // זמין לכל הנתיבים
+            maxAge: 60 * 60 * 24, // 24 שעות (בשניות)
         });
 
-        // מחזירים תשובה שהטוקן נשמר בהצלחה
+        // החזרת תגובה שהטוקן נשמר בהצלחה
         return NextResponse.json({ message: 'Token saved successfully' });
     } catch (error) {
         console.error('Error saving token:', error);
