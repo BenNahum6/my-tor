@@ -158,7 +158,6 @@ export default function SignIn({ toggleSignUp }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         // Email Validation
         const emailError = validateEmail(email);
         if (!emailError) {
@@ -187,15 +186,9 @@ export default function SignIn({ toggleSignUp }) {
                 const data = await validateToken(token);
 
                 if (data?.data?.user?.role?.toLowerCase() === 'authenticated') {
-                    // If the user selected Remember me, save the token on the server in a cookie
-                    if (rememberMe) {
-                        // Sending token to the server to store it in an HttpOnly cookie
-                        await saveTokenOnServer(token, email);
-                    } else {
-                        // If "Remember me" was not selected, save the token in sessionStorage
-                        sessionStorage.setItem('jwt', token);
-                        sessionStorage.setItem('email', email);
-                    }
+
+                    // Sending token to the server to store it in an HttpOnly cookie
+                    await saveTokenOnServer(token, rememberMe);
 
                     // Redirect to the dashboard after the successful login process
                     router.push(`/dashboard/panel`);

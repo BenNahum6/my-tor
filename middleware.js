@@ -34,7 +34,7 @@ export async function dashboardAccessMiddleware(req) {
     const cookieToken = cookieStore.get('jwt')?.value;
 
     // console.log('Request Path:', req.nextUrl.pathname);
-    console.log('Cookie Token:', cookieToken);
+    // console.log('Cookie Token:', cookieToken);
 
     if (req.nextUrl.pathname.startsWith('/dashboard/')) {
         if (!cookieToken) {
@@ -80,13 +80,13 @@ function validateSlug(req) {
 }
 
 export function middleware(req) {
-    if (req.nextUrl.pathname === '/dashboard') {
-        return dashboardRedirectMiddleware(req);
-    }
-
-    if (req.nextUrl.pathname.startsWith('/dashboard/')) {
-        return dashboardAccessMiddleware(req);
-    }
+    // if (req.nextUrl.pathname === '/dashboard') {
+    //     return dashboardRedirectMiddleware(req);
+    // }
+    //
+    // if (req.nextUrl.pathname.startsWith('/dashboard/')) {
+    //     return dashboardAccessMiddleware(req);
+    // }
 
     if (req.nextUrl.pathname.startsWith('/pages/')) {
         return validateSlug(req);
