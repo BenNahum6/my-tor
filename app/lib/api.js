@@ -170,7 +170,6 @@ export const fetchSignIn = async (email, password) => {
         const apiUrl = process.env.NODE_ENV === 'production'
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-in`
             : `http://localhost:3000/api/auth/sign-in`;
-        console.log("API URL:", apiUrl);
 
         const response = await fetch(apiUrl, {
             method: 'POST',
@@ -198,6 +197,32 @@ export const fetchSignIn = async (email, password) => {
 
 /* Checks if token is valid */
 export const validateToken = async (token) => {
+    // try {
+    //     const apiUrl = process.env.NODE_ENV === 'production'
+    //         ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/authenticate`
+    //         : `http://localhost:3000/api/auth/authenticate`;
+    //
+    //     // שולחים את הבקשה עם הטוקן שנשלח לפונקציה
+    //     const headers = { 'Authorization': `Bearer ${token}` };
+    //
+    //     const response = await fetch(apiUrl, {
+    //         method: 'GET',
+    //         credentials: 'include', // חובה לשלוח את העוגיות אם יש
+    //         headers: headers,  // שלח את ה-Headers עם הטוקן
+    //     });
+    //
+    //     const responseData = await response.json();
+    //     console.log(responseData)
+    //
+    //     if (!response.ok) {
+    //         return { success: false, status: response.status, message: responseData.message || 'Unauthorized' };
+    //     }
+    //
+    //     return { success: true, status: response.status, data: responseData }; // מחזירים את המידע אם הטוקן תקין
+    // } catch (error) {
+    //     console.error('Token validation failed', error);
+    //     return { success: false, status: 500, message: 'Server error: ' + error.message };
+    // }
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/authenticate`
@@ -213,7 +238,6 @@ export const validateToken = async (token) => {
         });
 
         const responseData = await response.json();
-        console.log(responseData)
 
         if (!response.ok) {
             return { success: false, status: response.status, message: responseData.message || 'Unauthorized' };
