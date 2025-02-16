@@ -251,19 +251,17 @@ export const validateToken = async (token) => {
 };
 
 /* Save token in server */
-export const saveTokenOnServer = async (token) => {
+export const saveTokenOnServer = async (token, rememberMe) => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/save-token`
             : `http://localhost:3000/api/auth/save-token`;
 
-        // שולחים את הבקשה עם הטוקן שנשלח לפונקציה
-        const headers = { 'Authorization': `Bearer ${token}` };
-
         const response = await fetch(apiUrl, {
-            method: 'POST', // כי אנחנו שמים את הטוקן בשרת
-            credentials: 'include', // חובה לשלוח את העוגיות
-            headers: headers, // שולחים את ה-Headers עם הטוקן
+            method: 'POST',
+            credentials: 'include', // חובה כדי שהעוגיות יישלחו חזרה מהשרת
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token, rememberMe }), // שליחת כל הנתונים לשרת
         });
 
         const responseData = await response.json();

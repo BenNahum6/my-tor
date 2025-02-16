@@ -5,7 +5,6 @@ export async function POST(req) {
     try {
         const { email, password } = await req.json();
 
-        // ניסיון התחברות עם סיסמה
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
