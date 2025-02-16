@@ -259,9 +259,9 @@ export const saveTokenOnServer = async (token, rememberMe) => {
 
         const response = await fetch(apiUrl, {
             method: 'POST',
-            credentials: 'include', // חובה כדי שהעוגיות יישלחו חזרה מהשרת
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token, rememberMe }), // שליחת כל הנתונים לשרת
+            body: JSON.stringify({ token, rememberMe }),
         });
 
         const responseData = await response.json();
@@ -277,5 +277,28 @@ export const saveTokenOnServer = async (token, rememberMe) => {
     }
 };
 
+/* Delete token from cookie */
+export const deleteTokenFromServer = async () => {
+    try {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/delete-token`
+            : `http://localhost:3000/api/auth/delete-token`;
 
+        const response = await fetch(apiUrl, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {'Content-Type': 'application/json',},
+        });
 
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            return { success: false, status: response.status, message: responseData.message || 'Failed to delete token' };
+        }
+
+        return { success: true, status: response.status, message: 'Token deleted successfully' };
+    } catch (error) {
+        console.error('Token deletion failed', error);
+        return { success: false, status: 500, message: 'Server error: ' + error.message };
+    }
+};

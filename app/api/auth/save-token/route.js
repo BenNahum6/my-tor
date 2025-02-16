@@ -32,7 +32,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req) {
     try {
-        const { token, rememberMe } = await req.json(); // שליפת הטוקן וה-rememberMe מה-Body
+        const { token, rememberMe } = await req.json();
 
         if (!token) {
             return NextResponse.json({ error: 'Token is required' }, { status: 400 });
@@ -41,17 +41,17 @@ export async function POST(req) {
 
         const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: process.env.NODE_ENV === 'production', // Setup only in a production environment
             sameSite: 'Strict',
             path: '/',
         };
 
         // If rememberMe is true, add maxAge
         if (rememberMe) {
-            cookieOptions.maxAge = 60 * 60 * 24 * 7; // 7 ימים אם rememberMe נבחר
+            cookieOptions.maxAge = 60 * 60 * 24 * 7; // Save cookie for 7 days
         }
 
-        // שמירת הטוקן בעוגיה HttpOnly
+        // Saving token in HttpOnly cookie
         cookies().set('jwt', token, cookieOptions);
 
         return NextResponse.json({ message: 'Token saved successfully' });
