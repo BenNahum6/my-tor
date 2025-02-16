@@ -80,13 +80,13 @@ function validateSlug(req) {
 }
 
 export function middleware(req) {
-    // if (req.nextUrl.pathname === '/dashboard') {
-    //     return dashboardRedirectMiddleware(req);
-    // }
-    //
-    // if (req.nextUrl.pathname.startsWith('/dashboard/')) {
-    //     return dashboardAccessMiddleware(req);
-    // }
+    if (req.nextUrl.pathname === '/dashboard') {
+        return dashboardRedirectMiddleware(req);
+    }
+
+    if (req.nextUrl.pathname.startsWith('/dashboard/')) {
+        return dashboardAccessMiddleware(req);
+    }
 
     if (req.nextUrl.pathname.startsWith('/pages/')) {
         return validateSlug(req);
