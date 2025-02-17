@@ -17,6 +17,11 @@ export async function dashboardRedirectMiddleware(req) {
 
         if (error) {
             console.error('Token validation failed:', error);
+
+            // If there is an error (the token is invalid), delete the cookie
+            const response = NextResponse.next();
+            response.cookies.delete('jwt');
+
             return NextResponse.next();
         }
 
