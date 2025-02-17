@@ -37,13 +37,12 @@ export async function POST(req) {
         if (!token) {
             return NextResponse.json({ error: 'Token is required' }, { status: 400 });
         }
-        console.log("req", rememberMe)
 
         const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Setup only in a production environment
             sameSite: 'Strict',
-            path: '/',
+            path: '/dashboard',
         };
 
         // If rememberMe is true, add maxAge
