@@ -42,7 +42,7 @@ export async function POST(req) {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Setup only in a production environment
             sameSite: 'Strict',
-            path: '/dashboard',
+            path: '/',
         };
 
         // If rememberMe is true, add maxAge

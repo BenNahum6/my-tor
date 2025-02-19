@@ -2,6 +2,26 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { supabase } from '@/app/lib/supabase';
 
+// export async function tokenValid(req) {
+//     const cookieStore = cookies();
+//     const cookieToken = cookieStore.get('jwt')?.value;
+//
+//     // אם אין עוגיה או הטוקן לא תקין
+//     if (!cookieToken) {
+//         return false;
+//     }
+//
+//     // נוודא שהטוקן תקין
+//     const { data, error } = await supabase.auth.getUser(cookieToken);
+//     if (error) {
+//         console.error('Token validation failed:', error);
+//         return false;
+//     }
+//
+//     // אם הטוקן תקין
+//     return true;
+// }
+
 /* Checks if a token exists in the cookie and is valid, then skips the login page */
 export async function dashboardRedirectMiddleware(req) {
     const cookieStore = cookies();
@@ -18,11 +38,11 @@ export async function dashboardRedirectMiddleware(req) {
         if (error) {
             console.error('Token validation failed:', error);
 
-            // If there is an error (the token is invalid), delete the cookie
+            // Delete expiry token
             const response = NextResponse.next();
             response.cookies.delete('jwt');
-
-            return NextResponse.next();
+            // return NextResponse.redirect(new URL('/dashboard', req.url));
+            return response;
         }
 
         // If the token is valid, a reference to the dashboard/panel
@@ -51,6 +71,8 @@ export async function dashboardAccessMiddleware(req) {
 
         if (error) {
             console.error('Token validation failed:', error);
+            const response = NextResponse.next();
+            response.cookies.delete('jwt');
             return NextResponse.redirect(new URL('/dashboard', req.url));
         }
 
@@ -85,6 +107,10 @@ function validateSlug(req) {
 }
 
 export function middleware(req) {
+    // if (req.nextUrl.pathname === '/dashboard'){
+    //     return tokenValid(req)
+    // }
+
     if (req.nextUrl.pathname === '/dashboard') {
         return dashboardRedirectMiddleware(req);
     }

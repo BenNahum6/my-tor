@@ -1,9 +1,9 @@
 "use client";
 import React, { useState } from 'react';
 
-const NavbarWithSidebar = () => {
+const NavbarWithSidebar = ({ onImageUploadToggle }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+    const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
@@ -39,12 +39,13 @@ const NavbarWithSidebar = () => {
                         </div>
                         <div className="flex items-center">
                             <div className="flex items-center ms-3">
-                                <div>
+                                <div className="relative">
                                     <button
                                         type="button"
                                         className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                                        aria-expanded="false"
+                                        aria-expanded={dropdownOpen ? 'true' : 'false'}
                                         data-dropdown-toggle="dropdown-user"
+                                        onClick={() => setDropdownOpen(!dropdownOpen)}
                                     >
                                         <span className="sr-only">Open user menu</span>
                                         <img
@@ -53,6 +54,33 @@ const NavbarWithSidebar = () => {
                                             alt="user photo"
                                         />
                                     </button>
+                                    {dropdownOpen && (
+                                        <div
+                                            className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+                                            <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">
+                                                <p className="font-medium">John Doe</p>
+                                                <p className="text-xs text-gray-500">john.doe@example.com</p>
+                                            </div>
+                                            <hr className="border-t border-gray-300 my-1"/>
+
+                                            <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
+                                                <li>
+                                                    <button
+                                                        className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                        onClick={onImageUploadToggle}
+                                                    >
+                                                        Change image
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button
+                                                        className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                        Sign out
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -146,10 +174,11 @@ const NavbarWithSidebar = () => {
                         </li>
                     </ul>
                 </div>
-
             </aside>
         </>
     );
 };
 
 export default NavbarWithSidebar;
+
+
