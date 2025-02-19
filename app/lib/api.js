@@ -302,3 +302,35 @@ export const deleteTokenFromServer = async () => {
         return { success: false, status: 500, message: 'Server error: ' + error.message };
     }
 };
+
+/*  */
+export const uploadImage = async (image) => {
+    if (!image) {
+        console.error('לא נבחר קובץ');
+        return;
+    }
+
+    try {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/image-upload`
+            : `http://localhost:3000/api/appointments/image-upload`;
+
+        const formData = new FormData();
+        formData.append('image', image);
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData,
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('התמונה הועלתה בהצלחה:', data);
+        } else {
+            console.error('שגיאה בהעלאת התמונה');
+        }
+    } catch (error) {
+        console.error('שגיאה בשליחת הבקשה:', error);
+    }
+};

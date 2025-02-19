@@ -35,9 +35,9 @@ export async function POST(req) {
     const { data: user, error: authError } = await supabase.auth.signUp({
         email,
         password,
-        // options: {
-        //     data: { fullName },
-        // },
+        options: {
+            data: { fullName },
+        },
     });
 
     if (authError) {
