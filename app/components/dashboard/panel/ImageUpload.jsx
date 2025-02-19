@@ -107,7 +107,7 @@ const ImageUpload = ({ onImageUploadToggle }) => {
                     <div className="mt-4 text-center">
                         <p className="text-sm font-semibold text-white">Image Selected:</p>
                         <img
-                            src={image}
+                            src={preview}
                             alt="Uploaded"
                             className="mt-2 max-w-xs max-h-32 mx-auto rounded-md border border-[#3b82f6]"
                         />
