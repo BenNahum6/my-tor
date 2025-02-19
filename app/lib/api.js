@@ -306,8 +306,7 @@ export const deleteTokenFromServer = async () => {
 /*  */
 export const uploadImage = async (image) => {
     if (!image) {
-        console.error('לא נבחר קובץ');
-        return;
+        return { success: false, message: 'No file selected.' };
     }
 
     try {
@@ -326,11 +325,13 @@ export const uploadImage = async (image) => {
 
         if (response.ok) {
             const data = await response.json();
-            console.log('התמונה הועלתה בהצלחה:', data);
+            return { success: true, message: 'Image uploaded successfully', data };
         } else {
-            console.error('שגיאה בהעלאת התמונה');
+            const errorData = await response.json();
+            return { success: false, message: errorData.error || 'Error uploading image' };
         }
     } catch (error) {
-        console.error('שגיאה בשליחת הבקשה:', error);
+        console.error('Error sending request:', error);
+        return { success: false, message: `Error sending request: ${error.message}` };
     }
 };
