@@ -183,7 +183,7 @@ export const fetchSignIn = async (email, password) => {
         });
 
         const responseData = await response.json();
-
+        console.log('responseData: ', responseData);
         if (!responseData.success) {
             return { success: false, status: response.status, message: responseData.message || "Login failed" };
         }
@@ -335,3 +335,4 @@ export const uploadImage = async (image) => {
         return { success: false, message: `Error sending request: ${error.message}` };
     }
 };
+

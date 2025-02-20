@@ -1,12 +1,13 @@
 "use client";
 import React, { useState } from 'react';
 
-const NavbarWithSidebar = ({ onImageUploadToggle }) => {
+export default function Bar ({ onImageUploadToggle }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
+
 
     return (
         <>
@@ -178,7 +179,3 @@ const NavbarWithSidebar = ({ onImageUploadToggle }) => {
         </>
     );
 };
-
-export default NavbarWithSidebar;
-
-

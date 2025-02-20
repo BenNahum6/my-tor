@@ -17,7 +17,8 @@ export async function POST(req) {
         const buffer = Buffer.from(arrayBuffer);
 
         const safeFileName = await getUserName();  // Getting the user's name from the session
-        const filePath = `UserImages/${safeFileName}`;
+        const safeNameURL = safeFileName.replace(/\s+/g, ''); // Remove all spaces
+        const filePath = `UserImages/${safeNameURL}`;
 
         // Sending the file to Supabase Storage
         const { data, error } = await supabase.storage
@@ -33,7 +34,7 @@ export async function POST(req) {
         }
 
 
-        const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${filePath}`;
+        const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/Images/${filePath}`;
 
         const { dataUser, errorUser } = await supabase
             .from('Users')

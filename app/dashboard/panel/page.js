@@ -6,6 +6,7 @@ import ImageUpload from "@/app/components/dashboard/panel/ImageUpload";
 
 export default function HomeScreen() {
     const [isImageUploadOpen, setIsImageUploadOpen] = useState(false);
+    const [profileImageUrl, setProfileImageUrl] = useState(null); // 🔹 כאן נשמור את ה-URL
 
     const onImageUploadToggle = () => {
         setIsImageUploadOpen(!isImageUploadOpen);  // משנה את ה-state
