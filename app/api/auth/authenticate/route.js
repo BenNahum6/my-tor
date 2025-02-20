@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/app/lib/supabase';
 
 export async function GET(req) {
-    // קריאה של העוגיה HttpOnly
+
     const cookieStore = cookies();
     const cookieToken = cookieStore.get('jwt')?.value;
 

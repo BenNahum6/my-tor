@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {uploadImage} from '@/app/lib/api';
 
-const ImageUpload = ({ onImageUploadToggle }) => {
+export default function ImageUpload ({ onImageUploadToggle }) {
     const [image, setImage] = useState(null);
     const [isImageSelected, setIsImageSelected] = useState(false);
     const [preview, setPreview] = useState(null); // שמירה של ה-URL של התמונה
@@ -31,6 +31,7 @@ const ImageUpload = ({ onImageUploadToggle }) => {
         const result = await uploadImage(image); // Assuming uploadImage returns success status
 
         if (result.success) {
+            localStorage.setItem("profileImageUrl", result.data.url);
             setUploadStatus({ success: true, message: 'The image was uploaded successfully!' });
         } else {
             setUploadStatus({ success: false, message: result.message });
@@ -131,5 +132,3 @@ const ImageUpload = ({ onImageUploadToggle }) => {
         </div>
     );
 };
-
-export default ImageUpload;
