@@ -183,7 +183,7 @@ export const fetchSignIn = async (email, password) => {
         });
 
         const responseData = await response.json();
-        console.log('responseData: ', responseData);
+
         if (!responseData.success) {
             return { success: false, status: response.status, message: responseData.message || "Login failed" };
         }
@@ -303,7 +303,7 @@ export const deleteTokenFromServer = async () => {
     }
 };
 
-/*  */
+/* Uploading image to user profile */
 export const uploadImage = async (image) => {
     if (!image) {
         return { success: false, message: 'No file selected.' };
@@ -311,8 +311,8 @@ export const uploadImage = async (image) => {
 
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
-            ? `${process.env.NEXT_PUBLIC_API_URL}/api/appointments/image-upload`
-            : `http://localhost:3000/api/appointments/image-upload`;
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/users-function/image-upload`
+            : `http://localhost:3000/api/users-function/image-upload`;
 
         const formData = new FormData();
         formData.append('image', image);
@@ -335,4 +335,29 @@ export const uploadImage = async (image) => {
         return { success: false, message: `Error sending request: ${error.message}` };
     }
 };
+
+/* Gets the logged-in user information */
+export const getUserData = async () => {
+    try {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/users-function/get-user-data`
+            : `http://localhost:3000/api/users-function/get-user-data`;
+
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return { success: true, message: 'Data fetched successfully', data };
+        } else {
+            const errorData = await response.json();
+            return { success: false, message: errorData.error || 'Error fetching data' };
+        }
+    } catch (error) {
+        console.error('Error sending request:', error);
+        return { success: false, message: `Error sending request: ${error.message}` };
+    }
+}
 
