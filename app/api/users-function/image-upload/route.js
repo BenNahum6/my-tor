@@ -20,12 +20,16 @@ export async function POST(req) {
         const safeNameURL = safeFileName.replace(/\s+/g, ''); // Remove all spaces
         const filePath = `UserImages/${safeNameURL}`;
 
+        // מחיקת הקובץ הישן לפני ההעלאה החדשה
+        await supabase.storage.from("Images").remove([filePath]);
+
         // Sending the file to Supabase Storage
         const { data, error } = await supabase.storage
             .from("Images")
             .upload(filePath, buffer, {
                 contentType: file.type,
-                upsert: true, // Overwrite the file if it exists
+                upsert: true,
+                cacheControl: "0",
             });
 
         if (error) {
@@ -36,7 +40,7 @@ export async function POST(req) {
 
         const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/Images/${filePath}`;
 
-        const { dataUser, errorUser } = await supabase
+        const { data: userData, error: userError } = await supabase
             .from('Users')
             .update({
                 imageURL: publicUrl,

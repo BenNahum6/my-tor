@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 
-export default function Bar ({ onImageUploadToggle }) {
+export default function Bar ({ onImageUploadToggle, userData }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggleSidebar = () => {
@@ -49,18 +49,22 @@ export default function Bar ({ onImageUploadToggle }) {
                                         onClick={() => setDropdownOpen(!dropdownOpen)}
                                     >
                                         <span className="sr-only">Open user menu</span>
-                                        <img
-                                            className="w-8 h-8 rounded-full"
-                                            src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                                            alt="user photo"
-                                        />
+                                        {userData && userData.imageURL ? (
+                                            <img
+                                                className="w-8 h-8 rounded-full"
+                                                src={`${userData.imageURL}?t=${new Date().getTime()}`}
+                                                alt="user photo"
+                                            />
+                                        ) : (
+                                            <div className="w-8 h-8 rounded-full bg-gray-300" /> // תמונה ריקה במקום שגיאה
+                                        )}
                                     </button>
                                     {dropdownOpen && (
                                         <div
                                             className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg dark:bg-gray-800">
                                             <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">
-                                                <p className="font-medium">John Doe</p>
-                                                <p className="text-xs text-gray-500">john.doe@example.com</p>
+                                                <p className="font-medium">{userData.fullName}</p>
+                                                <p className="text-xs text-gray-500">{userData.email}</p>
                                             </div>
                                             <hr className="border-t border-gray-300 my-1"/>
 
