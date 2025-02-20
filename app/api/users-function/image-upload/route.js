@@ -29,7 +29,7 @@ export async function POST(req) {
             .upload(filePath, buffer, {
                 contentType: file.type,
                 upsert: true,
-                cacheControl: "0",
+                cacheControl: 'no-store',
             });
 
         if (error) {
