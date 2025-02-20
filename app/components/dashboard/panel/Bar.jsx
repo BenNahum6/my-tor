@@ -72,16 +72,23 @@ export default function Bar ({ onImageUploadToggle, userData }) {
                                                 <li>
                                                     <button
                                                         className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                        onClick={onImageUploadToggle}
+                                                        onClick={() => {
+                                                            onImageUploadToggle(); // פעולה לפתיחת העלאת תמונה
+                                                            setDropdownOpen(false); // סגירת ה-dropdown
+                                                        }}
                                                     >
                                                         Change image
                                                     </button>
                                                 </li>
                                                 <li>
                                                     <button
-                                                        className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                        className="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                        onClick={() => {
+                                                        setDropdownOpen(false); // סגירת ה-dropdown
+                                                        }}>
                                                         Sign out
                                                     </button>
+
                                                 </li>
                                             </ul>
                                         </div>
