@@ -1,56 +1,79 @@
-import Image from "next/image";
+// import Image from 'next/image';
+// import Link from 'next/link';
+//
+// export default function Workers({ usersData }) {
+//     // בדיקה אם נתונים קיימים
+//     if (!usersData || usersData.length === 0) {
+//         return <div>No workers found</div>;  // הצג הודעה אם אין עובדים
+//     }
+//
+//     console.log('usersDataaaa: ', usersData);
+//
+//     return (
+//         <div className="min-h-screen bg-base-200">
+//             {usersData.map((worker, index) => (
+//                 <div key={index} className="hero bg-base-100 my-4 flex items-center">
+//                     {/* תצוגת התמונה בגודל מותאם */}
+//                     <div className="relative w-full sm:w-2/3 md:w-1/2 lg:w-1/3 h-64 sm:h-80 md:h-96">
+//                         <Image
+//                             src={worker.imageURL}  // נתיב התמונה
+//                             alt={worker.fullName}   // שם העובד
+//                             layout="fill"           // התמונה תמלא את כל ה-container
+//                             objectFit="cover"       // התמונה תתאים לגודל מבלי לעוות
+//                             className="rounded-lg shadow-2xl"
+//                         />
+//                     </div>
+//                     <div className="flex-1 flex flex-col items-center text-center ml-4">
+//                         {/* קרבה יותר לתמונה */}
+//                         <h1 className="text-4xl font-bold mb-4">{worker.fullName}</h1> {/* שם העובד */}
+//                         <p className="py-6 mb-4">{worker.email}</p> {/* כתובת דוא"ל */}
+//                         <Link href={`/pages/${worker.fullName}`} passHref>
+//                             <button className="btn btn-primary">Get Started</button>
+//                         </Link>
+//                     </div>
+//                 </div>
+//             ))}
+//         </div>
+//     );
+// }
+
+import Image from 'next/image';
 import Link from 'next/link';
 
-import pic from "../assets/Bibi.jpeg"
-import pic1 from "../assets/Itamar.jpeg"
-import pic2 from "../assets/Kahana.jpeg"
-import pic3 from "../assets/Michael.jpeg"
-
-//TODO Put this in DB
-const workers = [
-    {
-      name: 'Bibi',
-      image: pic,
-      description: 'I\'m love champain.',
-    },
-    {
-      name: 'Itamar',
-      image: pic1,
-      description: 'I\'m love demokrat.',
-    },
-    {
-      name: 'Kahana',
-      image: pic2,
-      description: 'I\'m love tora.',
-    },
-    {
-      name: 'Michael',
-      image: pic3,
-      description: 'I\'m bagatz.',
+export default function Workers({ usersData }) {
+    // בדיקה אם נתונים קיימים
+    if (!usersData || usersData.length === 0) {
+        return <div>No workers found</div>;  // הצג הודעה אם אין עובדים
     }
-  ];
-  
-  export default function Workers() {
+
+    console.log('usersDataaaa: ', usersData);
 
     return (
-      <div className="min-h-screen bg-base-200">
-        {workers.map((worker, index) => (
-          <div key={index} className="hero bg-base-100 my-4 flex items-center">
-            <Image
-              src={worker.image}
-              alt={worker.name}
-              className="w-56 h-64 object-cover rounded-lg shadow-2xl flex-shrink-0"
-            />
-            <div className="flex-1 flex flex-col items-center text-center">
-              <h1 className="text-4xl font-bold mb-4">{worker.name}</h1>
-              <p className="py-6 mb-4">{worker.description}</p>
-              <Link href={`/pages/${worker.name}`} className="hover:underline">
-                <button className="btn btn-primary">Get Started</button>
-              </Link>
-            </div>
-          </div>
-        ))}
-      </div>
+        <div className="min-h-screen bg-base-200">
+            {usersData.map((worker, index) => (
+                <div key={index} className="hero bg-base-100 my-4 flex items-center">
+                    {/* תצוגת התמונה בגודל מותאם */}
+                    <div className="relative w-full sm:w-2/3 md:w-1/2 lg:w-1/3 h-64 sm:h-80 md:h-96">
+                        <Image
+                            src={worker.imageURL}
+                            alt={worker.fullName}
+                            fill
+                            style={{ objectFit: 'cover' }}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"  // הוספת sizes
+                            className="rounded-lg shadow-2xl"
+                        />
+
+                    </div>
+                    <div className="flex-1 flex flex-col items-center text-center ml-4">
+                        {/* קרבה יותר לתמונה */}
+                        <h1 className="text-4xl font-bold mb-4">{worker.fullName}</h1> {/* שם העובד */}
+                        <p className="py-6 mb-4">{worker.email}</p> {/* כתובת דוא"ל */}
+                        <Link href={`/pages/${worker.fullName}`} passHref>
+                            <button className="btn btn-primary">Get Started</button>
+                        </Link>
+                    </div>
+                </div>
+            ))}
+        </div>
     );
-  }
-  
+}

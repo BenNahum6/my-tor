@@ -197,32 +197,6 @@ export const fetchSignIn = async (email, password) => {
 
 /* Checks if token is valid */
 export const validateToken = async (token) => {
-    // try {
-    //     const apiUrl = process.env.NODE_ENV === 'production'
-    //         ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/authenticate`
-    //         : `http://localhost:3000/api/auth/authenticate`;
-    //
-    //     // שולחים את הבקשה עם הטוקן שנשלח לפונקציה
-    //     const headers = { 'Authorization': `Bearer ${token}` };
-    //
-    //     const response = await fetch(apiUrl, {
-    //         method: 'GET',
-    //         credentials: 'include', // חובה לשלוח את העוגיות אם יש
-    //         headers: headers,  // שלח את ה-Headers עם הטוקן
-    //     });
-    //
-    //     const responseData = await response.json();
-    //     console.log(responseData)
-    //
-    //     if (!response.ok) {
-    //         return { success: false, status: response.status, message: responseData.message || 'Unauthorized' };
-    //     }
-    //
-    //     return { success: true, status: response.status, data: responseData }; // מחזירים את המידע אם הטוקן תקין
-    // } catch (error) {
-    //     console.error('Token validation failed', error);
-    //     return { success: false, status: 500, message: 'Server error: ' + error.message };
-    // }
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
             ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/authenticate`
@@ -337,11 +311,11 @@ export const uploadImage = async (image) => {
 };
 
 /* Gets the logged-in user information */
-export const getUserData = async () => {
+export const getConnectedUserData = async () => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
-            ? `${process.env.NEXT_PUBLIC_API_URL}/api/users-function/get-user-data`
-            : `http://localhost:3000/api/users-function/get-user-data`;
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/users-function/gget-connected-user-data`
+            : `http://localhost:3000/api/users-function/get-connected-user-data`;
 
         const response = await fetch(apiUrl, {
             method: 'GET',
@@ -361,3 +335,28 @@ export const getUserData = async () => {
     }
 }
 
+/* Get all users data */
+export async function fetchAllUsersData() {
+    try {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/users-function/get-all-users-data`
+            : `http://localhost:3000/api/users-function/get-all-users-data`;
+
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            credentials: 'include', // אם צריך לשלוח cookie/session
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            // console.log('data: ', data);
+            return { success: true, message: 'Data fetched successfully', data };
+        } else {
+            const errorData = await response.json();
+            return { success: false, message: errorData.error || 'Error fetching data' };
+        }
+    } catch (error) {
+        console.error('Error sending request:', error);
+        return { success: false, message: `Error sending request: ${error.message}` };
+    }
+}
