@@ -37,7 +37,7 @@ import React, { useState, useEffect } from "react";
 import MainBord from "@/app/components/dashboard/panel/MainBord";
 import Bar from "@/app/components/dashboard/panel/Bar";
 import ImageUpload from "@/app/components/dashboard/panel/ImageUpload";
-import { getUserData } from "@/app/lib/api";
+import { getConnectedUserData } from "@/app/lib/api";
 
 export default function HomeScreen() {
     const [isImageUploadOpen, setIsImageUploadOpen] = useState(false);
@@ -49,7 +49,7 @@ export default function HomeScreen() {
 
     // Retrieve user data
     async function fetchUserData() {
-        const response = await getUserData();
+        const response = await getConnectedUserData();
         if (response.success) {
             setUserData(response.data);
         } else {

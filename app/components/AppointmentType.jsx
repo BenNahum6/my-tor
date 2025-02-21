@@ -16,7 +16,7 @@ const PresentsAppointments = ({ date }) => {
     const formattedDate = formatDate(date);
     const params = useParams();
     const slug = params.slug;
-    console.log("slug: ", slug)
+    // console.log("slug: ", slug)
 
     const handleServiceClick = (service) => {
         setSelectedService(service);
