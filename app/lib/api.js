@@ -360,7 +360,7 @@ export async function fetchAllUsersData() {
     }
 }
 
-/* Logout of a logged-in user */
+/* Log-out of a logged-in user */
 export async function signOut() {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
