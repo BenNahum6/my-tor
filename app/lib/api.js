@@ -346,7 +346,6 @@ export async function fetchAllUsersData() {
             method: 'GET',
             credentials: 'include', // אם צריך לשלוח cookie/session
         });
-
         if (response.ok) {
             const data = await response.json();
             // console.log('data: ', data);
@@ -357,6 +356,30 @@ export async function fetchAllUsersData() {
         }
     } catch (error) {
         console.error('Error sending request:', error);
+        return { success: false, message: `Error sending request: ${error.message}` };
+    }
+}
+
+/* Logout of a logged-in user */
+export async function signOut() {
+    try {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-out`
+            : `http://localhost:3000/api/auth/sign-out`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            credentials: 'include',
+        });
+
+        if (response.ok) {
+            return { success: true, message: 'User signed out successfully' };
+        } else {
+            const errorData = await response.json();
+            return { success: false, message: errorData.error || 'Error signing out' };
+        }
+    } catch (error) {
+        console.error('Error sending sign-out request:', error);
         return { success: false, message: `Error sending request: ${error.message}` };
     }
 }
