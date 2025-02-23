@@ -314,7 +314,7 @@ export const uploadImage = async (image) => {
 export const getConnectedUserData = async () => {
     try {
         const apiUrl = process.env.NODE_ENV === 'production'
-            ? `${process.env.NEXT_PUBLIC_API_URL}/api/users-function/gget-connected-user-data`
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/users-function/get-connected-user-data`
             : `http://localhost:3000/api/users-function/get-connected-user-data`;
 
         const response = await fetch(apiUrl, {
