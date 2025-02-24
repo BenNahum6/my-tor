@@ -70,3 +70,20 @@ export const validatePassword = (password) => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=[\]{};':"\\|,.<>/?]).{10,}$/;
     return passwordRegex.test(password)
 };
+
+/* Return appointments on today's date */
+export const todayAppointments = (appointments) => {
+    if (!Array.isArray(appointments)) {
+        console.error("todayAppointments קיבלה ערך לא תקין:", appointments);
+        return [];
+    }
+
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    return appointments
+        .filter(appointment => appointment.date === today)
+        .map(appointment => ({
+            ...appointment,
+            time: appointment.time ? appointment.time.replace("+02", "") : appointment.time // מסיר את +02 מהזמן אם קיים
+        }));
+};
+

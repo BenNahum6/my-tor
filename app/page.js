@@ -51,7 +51,6 @@ let businessName = "Best barber Shop";
 export default async function Home() {
     // שליפת הנתונים בצד השרת
     let { success, data, message } = await fetchAllUsersData();
-
     // טיפול במקרה של שגיאה בהשגת נתונים
     const names = success && data.length ? data.map(user => user.fullName) : []; // אם לא הצליח, שולח מערך ריק
 
