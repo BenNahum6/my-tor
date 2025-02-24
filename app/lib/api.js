@@ -348,7 +348,6 @@ export async function fetchAllUsersData() {
         });
         if (response.ok) {
             const data = await response.json();
-            // console.log('data: ', data);
             return { success: true, message: 'Data fetched successfully', data };
         } else {
             const errorData = await response.json();
@@ -383,3 +382,31 @@ export async function signOut() {
         return { success: false, message: `Error sending request: ${error.message}` };
     }
 }
+
+/* Get all appointments*/
+export async function getAllAppointments() {
+    try {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/api/users-function/get-all-appointments`
+            : `http://localhost:3000/api/users-function/get-all-appointments`;
+
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error fetching appointments:', errorData);
+            return { success: false, message: errorData.error || 'Error fetching appointments' };
+        }
+
+        const data = await response.json();
+        return { success: true, data };
+
+    } catch (error) {
+        console.error('Error fetching appointments:', error);
+        return { success: false, message: `Error fetching data: ${error.message}` };
+    }
+}
+

@@ -46,8 +46,6 @@ export default function Workers({ usersData }) {
         return <div>No workers found</div>;  // הצג הודעה אם אין עובדים
     }
 
-    console.log('usersDataaaa: ', usersData);
-
     return (
         <div className="min-h-screen bg-base-200">
             {usersData.map((worker, index) => (
