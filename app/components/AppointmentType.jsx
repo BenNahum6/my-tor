@@ -10,7 +10,7 @@ const serviceOptions = [
     { name: "Hair Color", price: 80, duration: 60 }
 ];
 
-const PresentsAppointments = ({ date }) => {
+export default function PresentsAppointments({ date }){
     const [selectedService, setSelectedService] = useState(null);
     const router = useRouter();
     const formattedDate = formatDate(date);
@@ -51,5 +51,3 @@ const PresentsAppointments = ({ date }) => {
         </div>
     );
 };
-
-export default PresentsAppointments;
