@@ -1,6 +1,4 @@
 export default function TodayAppointmentsList({ appointmentsData }) {
-    console.log("Appointments Data in TodayAppointmentsList:", appointmentsData); // בדוק אם הנתונים מגיעים
-
     if (!appointmentsData || appointmentsData.length === 0) {
         return <p>אין פגישות להציג</p>;
     }
