@@ -14,8 +14,8 @@ export default  function Home() {
                 <Image
                     src={pic}
                     alt="Ben barber shop logo"
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: "cover" }}
                     className="absolute"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-60"></div>
@@ -24,12 +24,12 @@ export default  function Home() {
                         Hello there and welcome to Best barber Shop
                     </h1>
                     <p className="mb-5 text-white">
-                        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-                        quasi.
+                        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi.
                         In deleniti eaque aut repudiandae et a id nisi.
                     </p>
                 </div>
             </div>
+
             <Workers/>
         </>
     );

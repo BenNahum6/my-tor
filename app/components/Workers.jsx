@@ -7,6 +7,7 @@ export default async function Workers() {
     let {success, data, message} = await fetchAllUsersData();
     // טיפול במקרה של שגיאה בהשגת נתונים
     const names = success && data.length ? data.map(user => user.fullName) : []; // אם לא הצליח, שולח מערך ריק
+    console.log(data);
 
     if (!success) {
         console.error(message);
