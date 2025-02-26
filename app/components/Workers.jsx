@@ -27,8 +27,8 @@ export default async function Workers() {
                         />
                     </div>
                     <div className="flex-1 flex flex-col items-center text-center ml-4">
-                        <h1 className="text-4xl font-bold mb-4">{worker.fullName}</h1> {/* שם העובד */}
-                        <p className="py-6 mb-4">{worker.email}</p> {/* כתובת דוא"ל */}
+                        <h1 className="text-4xl font-bold mb-4">{worker.fullName}</h1>
+                        <p className="py-6 mb-4">{worker.aboutMyself}</p>
                         <Link href={`/pages/${worker.fullName}`} passHref>
                             <button
                                 className="btn btn-primary hover:scale-110 hover:shadow-lg transition-all duration-300 transform">

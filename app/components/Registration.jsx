@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { formatDate } from "@/app/utils/helper";
 import { fetchResetAppointment, fetchSetAppointment } from "@/app/lib/api";
 
-const Registration = ({ slug, date, time, onClose, onTimeout }) => {
+export default function Registration({ slug, date, time, onClose, onTimeout }) {
     const formattedDate = formatDate(date);
     const timeInSec = 3 * 60; // הזמן שנותר מוצג למשתמש.
     const [formData, setFormData] = useState({
@@ -224,5 +224,3 @@ const Registration = ({ slug, date, time, onClose, onTimeout }) => {
         </div>
     );
 };
-
-export default Registration;

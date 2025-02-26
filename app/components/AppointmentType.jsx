@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 import {useParams, useRouter} from 'next/navigation';
-import { formatDate } from '../utils/helper';
 
 const serviceOptions = [
     { name: "Haircut", price: 80, duration: 30 },
@@ -13,7 +12,6 @@ const serviceOptions = [
 export default function PresentsAppointments({ date }){
     const [selectedService, setSelectedService] = useState(null);
     const router = useRouter();
-    const formattedDate = formatDate(date);
     const params = useParams();
     const slug = params.slug;
     // console.log("slug: ", slug)
@@ -26,7 +24,7 @@ export default function PresentsAppointments({ date }){
     return (
         <div className="p-6 max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-4 mt-4 text-center text-gray-900 dark:text-gray-100">
-                Available Services for {formattedDate}
+                Available Services for {slug}
             </h2>
             {serviceOptions.length > 0 ? (
                 <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

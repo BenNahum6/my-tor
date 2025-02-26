@@ -14,7 +14,7 @@ export default async function AvailableAppointments({ params }) {
     }
 
     return (
-        <div>
+        <div className="bg-gray-100 dark:bg-gray-800 min-h-screen flex flex-col items-center p-6">
             <Navbar />
             {/* שולח את הנתונים שנאספו */}
             <PresentsAppointments slug={slug} date={date} data={timeData} />
