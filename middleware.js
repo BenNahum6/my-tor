@@ -66,7 +66,7 @@ export async function dashboardAccessMiddleware(req) {
 /* Checks that the path contains the correct slug */
 async function validateSlug(req) {
     const {pathname} = req.nextUrl;
-    console.log('pathname', pathname);
+    // console.log('pathname', pathname);
     if (!pathname.startsWith('/pages/')) {
         console.error("Path does not match criteria, proceeding...");
         return NextResponse.next();
@@ -126,7 +126,7 @@ async function getAllUser() {
 
     // const names = data.map(user => user.fullName.replace(/\s+/g, '-'));  // משנה רווחים ל-
     const names = data.map(user => user.fullName); // מחזיר את השם כפי שהוא
-    console.log('names:', names);
+    // console.log('names:', names);
 
     return names;  // מחזיר את המידע כ-JSON ישירות במקום Response
 }

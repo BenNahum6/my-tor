@@ -79,11 +79,20 @@ export const todayAppointments = (appointments) => {
     }
 
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
     return appointments
         .filter(appointment => appointment.date === today)
         .map(appointment => ({
             ...appointment,
-            time: appointment.time ? appointment.time.replace("+02", "") : appointment.time // מסיר את +02 מהזמן אם קיים
-        }));
+            time: appointment.time ? appointment.time.replace("+02", "") : appointment.time // מסיר את +02 אם קיים
+        }))
+        .sort((a, b) => {
+            const timeToMinutes = (time) => {
+                if (!time) return Infinity; // מבטיח שערכים חסרים ילכו לסוף הרשימה
+                const [hours, minutes] = time.split(":").map(Number);
+                return hours * 60 + minutes; // ממיר את השעה לדקות לסידור נכון
+            };
+            return timeToMinutes(a.time) - timeToMinutes(b.time);
+        });
 };
 
