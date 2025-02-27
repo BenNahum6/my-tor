@@ -84,7 +84,7 @@ export const todayAppointments = (appointments) => {
         .filter(appointment => appointment.date === today)
         .map(appointment => ({
             ...appointment,
-            time: appointment.time ? appointment.time.replace("+02", "") : appointment.time // מסיר את +02 אם קיים
+            time: appointment.time ? appointment.time.replace(":00+02", "") : appointment.time // מסיר את +02 אם קיים
         }))
         .sort((a, b) => {
             const timeToMinutes = (time) => {

@@ -13,7 +13,7 @@ export default async function Workers() {
     }
 
     return (
-        <div className="min-h-screen bg-base-200">
+        <div className="h-full bg-base-200">
             {data.map((worker, index) => (
                 <div key={index} className="hero bg-base-100 my-4 flex items-center border-b-2 border-gray-300 pb-6">
                     {/* תצוגת התמונה בגודל מותאם */}
