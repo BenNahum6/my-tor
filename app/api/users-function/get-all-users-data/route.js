@@ -3,10 +3,10 @@ import {supabase} from "@/app/lib/supabase";
 export async function GET(res) {
     try {
         const { data, error } = await supabase
-            .from('Users') // הטבלה
-            .select('*'); // כל העמודות
+            .from('Users')
+            .select('*')
+            .eq('exists', true);
 
-        // טיפול בשגיאות אם יש
         if (error) {
             console.error('Error fetching users:', error);
             return new Response(JSON.stringify({ error: 'Failed to fetch users' }), { status: 500 });

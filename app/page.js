@@ -15,8 +15,7 @@ export default  function Home() {
                     src={pic}
                     alt="Ben barber shop logo"
                     fill
-                    style={{ objectFit: "cover" }}
-                    className="absolute"
+                    className="absolute object-cover"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-60"></div>
                 <div className="relative flex flex-col items-center justify-start w-full h-full text-center p-4">

@@ -346,6 +346,7 @@ export async function fetchAllUsersData() {
             method: 'GET',
             credentials: 'include', // אם צריך לשלוח cookie/session
         });
+
         if (response.ok) {
             const data = await response.json();
             return { success: true, message: 'Data fetched successfully', data };
@@ -353,6 +354,7 @@ export async function fetchAllUsersData() {
             const errorData = await response.json();
             return { success: false, message: errorData.error || 'Error fetching data' };
         }
+
     } catch (error) {
         console.error('Error sending request:', error);
         return { success: false, message: `Error sending request: ${error.message}` };
