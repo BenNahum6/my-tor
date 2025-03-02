@@ -125,7 +125,8 @@ export const fetchSetAppointment = async (slug, date, time, firstName, lastName,
 
         if (response.ok) {
             const responseData = await response.json();
-            console.log('API Response:', responseData); // הדפסת התגובה מה-API
+            // console.log('API Response:', responseData);
+            return responseData;
         } else {
             console.log('Error submitting form:', response.statusText);
         }
