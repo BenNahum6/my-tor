@@ -113,7 +113,7 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
     const appointments = [];
     const now = new Date();
 
-    // יצירת תורים מ-0 עד 21 יום קדימה בלבד
+    // יצירת תורים מ-0 (היום) עד 21 ימים קדימה **כולל**
     for (let i = 0; i <= daysAhead; i++) {
         const day = new Date(now);
         day.setDate(now.getDate() + i);
