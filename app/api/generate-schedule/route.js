@@ -109,27 +109,25 @@
 import { supabase } from '../../lib/supabase';
 
 /* Creating dates and times */
-const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) => {
+const generateDatesAndTimes = (daysBack, daysAhead, startHour, endHour, intervalMinutes) => {
     const appointments = [];
     const now = new Date();
 
-    // Creating the dates and times for the coming weeks
-    for (let i = -28; i < daysAhead; i++) { // 4 שבועות אחורה עד 3 שבועות קדימה
+    // יצירת תורים בטווח הרצוי
+    for (let i = daysBack; i <= daysAhead; i++) {
         const day = new Date(now);
-        day.setDate(now.getDate() + i); // Adding/subtracting days
+        day.setDate(now.getDate() + i); // הזזה קדימה/אחורה
 
-        // Skip Saturdays (day 6)
-        if (day.getDay() === 6) {
-            continue;
-        }
+        // דילוג על שבתות
+        if (day.getDay() === 6) continue;
 
-        // Adjust Friday's end time
+        // שישי מסתיים ב-14:30
         let endTime = endHour;
         if (day.getDay() === 5) {
             endTime = 14.5;
         }
 
-        // Create appointments for each day
+        // יצירת תורים
         for (let hour = startHour; hour < endTime; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
@@ -138,10 +136,10 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
 
                 const hours = time.getHours().toString().padStart(2, '0');
                 const minutes = time.getMinutes().toString().padStart(2, '0');
-                const timeString = `${hours}:${minutes}:00+02`; // Israel time
+                const timeString = `${hours}:${minutes}:00+02`;
 
                 appointments.push({
-                    date: time.toISOString().split('T')[0], // ISO format
+                    date: time.toISOString().split('T')[0],
                     time: timeString,
                 });
             }
@@ -206,7 +204,7 @@ const insertAppointmentsToDb = async (appointments) => {
 /* Main function to insert appointments into all tables */
 export async function POST(req) {
     try {
-        const appointments = generateDatesAndTimes(21, 9, 21, 30); // Generate for 3 weeks ahead
+        const appointments = generateDatesAndTimes(-28, 21, 9, 21, 30);
         await insertAppointmentsToDb(appointments);
         return new Response('Appointments generated and inserted successfully.', { status: 200 });
     } catch (error) {
