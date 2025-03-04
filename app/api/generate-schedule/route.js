@@ -113,12 +113,12 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
     const appointments = [];
     const now = new Date();
 
-    // יצירת תורים מ-0 (היום) עד 21 ימים קדימה **כולל**
-    for (let i = 0; i <= daysAhead; i++) {
+    // יצירת תורים מ-0 (היום) ועד בדיוק 3 שבועות קדימה כולל
+    for (let i = 0; i <= daysAhead; i++) {  // שיניתי מ-0 עד 21 **כולל**
         const day = new Date(now);
         day.setDate(now.getDate() + i);
 
-        // דילוג על שבתות
+        // דילוג על שבתות (6)
         if (day.getDay() === 6) continue;
 
         // שישי מסתיים ב-14:30
@@ -127,7 +127,7 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
             endTime = 14.5;
         }
 
-        // יצירת תורים
+        // יצירת תורים לכל יום
         for (let hour = startHour; hour < endTime; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
@@ -204,10 +204,11 @@ const insertAppointmentsToDb = async (appointments) => {
 /* Main function to insert appointments into all tables */
 export async function POST(req) {
     try {
-        const appointments = generateDatesAndTimes(21, 9, 21, 30); // בדיוק 3 שבועות קדימה
+        const appointments = generateDatesAndTimes(21, 9, 21, 30); // שלושה שבועות בדיוק כולל היום ה-21
         await insertAppointmentsToDb(appointments);
         return new Response('Appointments generated and inserted successfully.', { status: 200 });
     } catch (error) {
         return new Response('Error generating appointments: ' + error.message, { status: 500 });
     }
 }
+
