@@ -113,38 +113,34 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
     const appointments = [];
     const now = new Date();
 
-    // Creating the dates and times for the coming week
+    // יצירת תורים מ-0 עד 21 יום קדימה בלבד
     for (let i = 0; i <= daysAhead; i++) {
         const day = new Date(now);
-        day.setDate(now.getDate() + i); // Adding another day
+        day.setDate(now.getDate() + i);
 
-        // Check if it's Saturday (day 6)
-        if (day.getDay() === 6) {
-            // Skip Saturdays
-            continue;
-        }
+        // דילוג על שבתות
+        if (day.getDay() === 6) continue;
 
-        // Check if it's Friday (day 5)
+        // שישי מסתיים ב-14:30
         let endTime = endHour;
         if (day.getDay() === 5) {
-            // On Friday, appointments will only be until 14:00 (2 PM)
             endTime = 14.5;
         }
 
-        // Create appointments for each day between 9:00 and the appropriate end time
+        // יצירת תורים
         for (let hour = startHour; hour < endTime; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
-                time.setHours(hour); // Set hour for local time (Israel)
-                time.setMinutes(minute); // Set minutes to the fixed interval (9:00, 9:30, etc.)
+                time.setHours(hour);
+                time.setMinutes(minute);
 
                 const hours = time.getHours().toString().padStart(2, '0');
                 const minutes = time.getMinutes().toString().padStart(2, '0');
-                const timeString = `${hours}:${minutes}:00+02`; // Adding +02 for Israel time zone
+                const timeString = `${hours}:${minutes}:00+02`; // זמן ישראל
 
                 appointments.push({
-                    date: time.toISOString().split('T')[0], // Save the date in ISO format
-                    time: timeString, // Saving time in timetz format
+                    date: time.toISOString().split('T')[0], // תאריך בפורמט ISO
+                    time: timeString, // שמירת השעה בפורמט מתאים
                 });
             }
         }
@@ -155,10 +151,10 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
 
 /* Insert appointments into all tables */
 const insertAppointmentsToDb = async (appointments) => {
-    const tables = ['Ben Nahum']; // List of all tables to handle
+    const tables = ['Ben Nahum']; // רשימת טבלאות
 
     for (let table of tables) {
-        // Delete only records older than 28 days
+        // מחיקה של תורים שעברו 28 יום מהיום
         const deleteThreshold = new Date();
         deleteThreshold.setDate(deleteThreshold.getDate() - 28);
         const formattedThreshold = deleteThreshold.toISOString().split('T')[0];
@@ -166,14 +162,14 @@ const insertAppointmentsToDb = async (appointments) => {
         const { error: deleteError } = await supabase
             .from(table)
             .delete()
-            .lt('date', formattedThreshold); // Deletes only data older than 28 days
+            .lt('date', formattedThreshold); // מוחק רק תורים ישנים מ-28 יום
 
         if (deleteError) {
             console.error(`Error deleting appointments from ${table}:`, deleteError.message);
             continue;
         }
 
-        // Insert new appointments
+        // הכנסת תורים חדשים רק אם הם לא קיימים כבר
         for (const appointment of appointments) {
             const { data: existingAppointments, error: selectError } = await supabase
                 .from(table)
@@ -208,7 +204,7 @@ const insertAppointmentsToDb = async (appointments) => {
 /* Main function to insert appointments into all tables */
 export async function POST(req) {
     try {
-        const appointments = generateDatesAndTimes(21, 9, 21, 30); // Create appointments for the next 3 weeks
+        const appointments = generateDatesAndTimes(21, 9, 21, 30); // בדיוק 3 שבועות קדימה
         await insertAppointmentsToDb(appointments);
         return new Response('Appointments generated and inserted successfully.', { status: 200 });
     } catch (error) {
