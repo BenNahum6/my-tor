@@ -108,26 +108,26 @@
 
 import { supabase } from '../../lib/supabase';
 
-/* Creating dates and times */
-const generateDatesAndTimes = (daysBack, daysAhead, startHour, endHour, intervalMinutes) => {
+/* יצירת תורים */
+const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) => {
     const appointments = [];
     const now = new Date();
 
-    // יצירת תורים בטווח הרצוי
-    for (let i = daysBack; i <= daysAhead; i++) {
+    // יצירת תורים מהיום ועד 3 שבועות קדימה
+    for (let i = 0; i <= daysAhead; i++) {
         const day = new Date(now);
-        day.setDate(now.getDate() + i); // הזזה קדימה/אחורה
+        day.setDate(now.getDate() + i);
 
-        // דילוג על שבתות
+        // לדלג על שבתות
         if (day.getDay() === 6) continue;
 
-        // שישי מסתיים ב-14:30
+        // בשישי סיום מוקדם
         let endTime = endHour;
         if (day.getDay() === 5) {
             endTime = 14.5;
         }
 
-        // יצירת תורים
+        // יצירת תורים לכל שעה
         for (let hour = startHour; hour < endTime; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
@@ -146,15 +146,16 @@ const generateDatesAndTimes = (daysBack, daysAhead, startHour, endHour, interval
         }
     }
 
+    console.log(`✔ נוצרו ${appointments.length} תורים חדשים`);
     return appointments;
 };
 
-/* Insert appointments into all tables */
+/* הכנסת תורים למסד הנתונים */
 const insertAppointmentsToDb = async (appointments) => {
-    const tables = ['Ben Nahum']; // List of tables
+    const tables = ['Ben Nahum'];
 
     for (let table of tables) {
-        // Delete only records older than 4 weeks (28 days)
+        // מחיקת תורים ישנים יותר מ-28 ימים אחורה
         const deleteThreshold = new Date();
         deleteThreshold.setDate(deleteThreshold.getDate() - 28);
         const formattedThreshold = deleteThreshold.toISOString().split('T')[0];
@@ -162,14 +163,16 @@ const insertAppointmentsToDb = async (appointments) => {
         const { error: deleteError } = await supabase
             .from(table)
             .delete()
-            .lt('date', formattedThreshold); // Deletes only data older than 4 weeks
+            .lt('date', formattedThreshold);
 
         if (deleteError) {
-            console.error(`Error deleting appointments from ${table}:`, deleteError.message);
+            console.error(`❌ שגיאה במחיקת תורים מהטבלה ${table}:`, deleteError.message);
             continue;
+        } else {
+            console.log(`🗑️ נמחקו תורים ישנים מהטבלה ${table}`);
         }
 
-        // Insert new appointments
+        // הכנסת תורים חדשים
         for (const appointment of appointments) {
             const { data: existingAppointments, error: selectError } = await supabase
                 .from(table)
@@ -178,7 +181,7 @@ const insertAppointmentsToDb = async (appointments) => {
                 .eq('time', appointment.time);
 
             if (selectError) {
-                console.error(`Error checking existing appointments in ${table}:`, selectError.message);
+                console.error(`❌ שגיאה בבדיקת תורים קיימים בטבלה ${table}:`, selectError.message);
                 continue;
             }
 
@@ -192,22 +195,24 @@ const insertAppointmentsToDb = async (appointments) => {
                     }]);
 
                 if (insertError) {
-                    console.error(`Error inserting appointment into ${table}:`, insertError.message);
+                    console.error(`❌ שגיאה בהכנסת תור לטבלה ${table}:`, insertError.message);
+                } else {
+                    console.log(`✅ נוסף תור חדש: ${appointment.date} ב-${appointment.time}`);
                 }
             } else {
-                console.log(`Appointment already exists for ${appointment.date} at ${appointment.time}, skipping.`);
+                console.log(`⚠️ תור כבר קיים: ${appointment.date} ב-${appointment.time}, דילוג.`);
             }
         }
     }
 };
 
-/* Main function to insert appointments into all tables */
+/* פונקציה ראשית */
 export async function POST(req) {
     try {
-        const appointments = generateDatesAndTimes(-28, 21, 9, 21, 30);
+        const appointments = generateDatesAndTimes(21, 9, 21, 30); // 3 שבועות קדימה
         await insertAppointmentsToDb(appointments);
-        return new Response('Appointments generated and inserted successfully.', { status: 200 });
+        return new Response('✔ תורים נוצרו והוכנסו בהצלחה.', { status: 200 });
     } catch (error) {
-        return new Response('Error generating appointments: ' + error.message, { status: 500 });
+        return new Response('❌ שגיאה ביצירת תורים: ' + error.message, { status: 500 });
     }
 }
