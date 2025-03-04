@@ -20,6 +20,7 @@ export default function HomeScreen() {
         async function fetchUserData() {
             try {
                 const response = await getConnectedUserData();
+                // console.log('response', response);
                 if (response.success) {
                     setUserData(response.data);
                 } else {
@@ -27,6 +28,8 @@ export default function HomeScreen() {
                 }
 
                 const result = await getAllAppointments();
+                // console.log('result', result);
+
                 if (result.success) {
                     const todayDateAppointments = todayAppointments(result.data);
                     setAppointments(todayDateAppointments); // עדכון הסטייט

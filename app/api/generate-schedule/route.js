@@ -13,7 +13,6 @@
 //         // Check if it's Saturday (day 6)
 //         if (day.getDay() === 6) {
 //             // Skip Saturdays
-//             console.log(`Skipping Saturday: ${day.toISOString().split('T')[0]}`);
 //             continue;
 //         }
 //
@@ -31,7 +30,6 @@
 //                 time.setHours(hour); // Set hour for local time (Israel)
 //                 time.setMinutes(minute); // Set minutes to the fixed interval (9:00, 9:30, etc.)
 //
-//                 // Create a time string in timetz format (hour:minute:second+timezone)
 //                 const hours = time.getHours().toString().padStart(2, '0');
 //                 const minutes = time.getMinutes().toString().padStart(2, '0');
 //                 const timeString = `${hours}:${minutes}:00+02`; // Adding +02 for Israel time zone
@@ -47,98 +45,61 @@
 //     return appointments;
 // };
 //
-// /* Checking if the appointment already exists */
-// const checkIfAppointmentExists = async (date, time) => {
-//     try {
-//         const { data, error } = await supabase
-//             .from('calendar')
-//             .select('*')
-//             .eq('date', date)
-//             .eq('time', time);
+// /* Insert appointments into all tables */
+// const insertAppointmentsToDb = async (appointments) => {
+//     const tables = ['Ben Nahum']; // List of all tables to handle
 //
-//         if (error) {
-//             console.error('Error checking if appointment exists:', error.message);
-//             return false;
+//     for (let table of tables) {
+//         // Delete existing appointments from the table (before today)
+//         const { error: deleteError } = await supabase
+//             .from(table) // Access the correct table
+//             .delete()
+//             .lt('date', new Date().toISOString().split('T')[0]); // Deletes all appointments before today
+//
+//         if (deleteError) {
+//             console.error(`Error deleting appointments from ${table}:`, deleteError.message);
+//             continue;
 //         }
 //
-//         console.log(`Appointments found for ${date} at ${time}:`, data);
-//         return data.length > 0; // If found an appointment with the same date and time
-//     } catch (err) {
-//         console.error('Unexpected error while checking appointment existence:', err.message);
-//         return false;
-//     }
-// };
-//
-// /* Deleting yesterday's appointment */
-// const deletePreviousDayAppointments = async () => {
-//     const israelTime = new Date();
-//     israelTime.setDate(israelTime.getDate() - 1);
-//
-//     const yesterday = israelTime.toISOString().split('T')[0];
-//
-//     const { data, error } = await supabase
-//         .from('calendar')
-//         .delete()
-//         .eq('date', yesterday);
-//
-//     if (error) {
-//         console.error('Error deleting previous day appointments:', error.message);
-//     } else {
-//         console.log(`Deleted appointments for ${yesterday}`);
-//     }
-// };
-//
-// /* Injecting information into the DB */
-// const insertAppointmentsToDb = async (appointments) => {
-//     try {
-//         await deletePreviousDayAppointments();
-//
-//         // Adding new appointments
+//         // Insert new appointments into the table (if not already existing)
 //         for (const appointment of appointments) {
-//             const exists = await checkIfAppointmentExists(appointment.date, appointment.time);
+//             // Check if the appointment already exists in the current table
+//             const { data: existingAppointments, error: selectError } = await supabase
+//                 .from(table) // Access the correct table
+//                 .select('date, time')
+//                 .eq('date', appointment.date)
+//                 .eq('time', appointment.time);
 //
-//             if (exists) {
-//                 console.log(`Appointment already exists for ${appointment.date} at ${appointment.time}`);
+//             if (selectError) {
+//                 console.error(`Error checking existing appointments in ${table}:`, selectError.message);
 //                 continue;
 //             }
 //
-//             // If the appointment does not exist, we will add it to the database
-//             const { data, error } = await supabase
-//                 .from('calendar')
-//                 .insert([{
-//                     date: appointment.date,
-//                     time: appointment.time,
-//                     available: true
-//                 }]);
+//             // If the appointment already exists, skip it
+//             if (existingAppointments.length === 0) {
+//                 const { error: insertError } = await supabase
+//                     .from(table) // Access the correct table
+//                     .insert([{
+//                         date: appointment.date,
+//                         time: appointment.time,
+//                         available: true // Marking appointment as available
+//                     }]);
 //
-//             if (error) {
-//                 console.error('Error inserting appointment:', error.message);
-//             } else {
-//                 console.log('Appointment added successfully:', data);
-//
-//                 // Check if the queue was added correctly
-//                 const { data: fetchedData, error: fetchError } = await supabase
-//                     .from('calendar')
-//                     .select('*')
-//                     .eq('date', appointment.date)
-//                     .eq('time', appointment.time);
-//
-//                 if (fetchError) {
-//                     console.error('Error fetching added appointment:', fetchError.message);
-//                 } else {
-//                     console.log('Fetched added appointment:', fetchedData);
+//                 if (insertError) {
+//                     console.error(`Error inserting appointment into ${table}:`, insertError.message);
 //                 }
+//             } else {
+//                 console.log(`Appointment already exists for ${appointment.date} at ${appointment.time}, skipping.`);
 //             }
 //         }
-//     } catch (err) {
-//         console.error('Unexpected error while inserting appointments:', err.message);
 //     }
 // };
 //
+// /* Main function to insert appointments into all tables */
 // export async function POST(req) {
 //     try {
-//         const appointments = generateDatesAndTimes(7, 9, 21, 30); // Creating an appointment for the week with 30 min intervals
-//         await insertAppointmentsToDb(appointments);
+//         const appointments = generateDatesAndTimes(7, 9, 21, 30); // Create appointments for the week with 30 min intervals
+//         await insertAppointmentsToDb(appointments); // Insert appointments into all tables
 //         return new Response('Appointments generated and inserted successfully.', { status: 200 });
 //     } catch (error) {
 //         return new Response('Error generating appointments: ' + error.message, { status: 500 });
@@ -152,38 +113,36 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
     const appointments = [];
     const now = new Date();
 
-    // Creating the dates and times for the coming week
-    for (let i = 0; i < daysAhead; i++) {
+    // Creating the dates and times for the coming weeks
+    for (let i = -28; i < daysAhead; i++) { // 4 שבועות אחורה עד 3 שבועות קדימה
         const day = new Date(now);
-        day.setDate(now.getDate() + i); // Adding another day
+        day.setDate(now.getDate() + i); // Adding/subtracting days
 
-        // Check if it's Saturday (day 6)
+        // Skip Saturdays (day 6)
         if (day.getDay() === 6) {
-            // Skip Saturdays
             continue;
         }
 
-        // Check if it's Friday (day 5)
+        // Adjust Friday's end time
         let endTime = endHour;
         if (day.getDay() === 5) {
-            // On Friday, appointments will only be until 14:00 (2 PM)
             endTime = 14.5;
         }
 
-        // Create appointments for each day between 9:00 and the appropriate end time
+        // Create appointments for each day
         for (let hour = startHour; hour < endTime; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
-                time.setHours(hour); // Set hour for local time (Israel)
-                time.setMinutes(minute); // Set minutes to the fixed interval (9:00, 9:30, etc.)
+                time.setHours(hour);
+                time.setMinutes(minute);
 
                 const hours = time.getHours().toString().padStart(2, '0');
                 const minutes = time.getMinutes().toString().padStart(2, '0');
-                const timeString = `${hours}:${minutes}:00+02`; // Adding +02 for Israel time zone
+                const timeString = `${hours}:${minutes}:00+02`; // Israel time
 
                 appointments.push({
-                    date: time.toISOString().split('T')[0], // Save the date in ISO format
-                    time: timeString, // Saving time in timetz format
+                    date: time.toISOString().split('T')[0], // ISO format
+                    time: timeString,
                 });
             }
         }
@@ -194,25 +153,28 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
 
 /* Insert appointments into all tables */
 const insertAppointmentsToDb = async (appointments) => {
-    const tables = ['Ben Nahum']; // List of all tables to handle
+    const tables = ['Ben Nahum']; // List of tables
 
     for (let table of tables) {
-        // Delete existing appointments from the table (before today)
+        // Delete only records older than 4 weeks (28 days)
+        const deleteThreshold = new Date();
+        deleteThreshold.setDate(deleteThreshold.getDate() - 28);
+        const formattedThreshold = deleteThreshold.toISOString().split('T')[0];
+
         const { error: deleteError } = await supabase
-            .from(table) // Access the correct table
+            .from(table)
             .delete()
-            .lt('date', new Date().toISOString().split('T')[0]); // Deletes all appointments before today
+            .lt('date', formattedThreshold); // Deletes only data older than 4 weeks
 
         if (deleteError) {
             console.error(`Error deleting appointments from ${table}:`, deleteError.message);
             continue;
         }
 
-        // Insert new appointments into the table (if not already existing)
+        // Insert new appointments
         for (const appointment of appointments) {
-            // Check if the appointment already exists in the current table
             const { data: existingAppointments, error: selectError } = await supabase
-                .from(table) // Access the correct table
+                .from(table)
                 .select('date, time')
                 .eq('date', appointment.date)
                 .eq('time', appointment.time);
@@ -222,14 +184,13 @@ const insertAppointmentsToDb = async (appointments) => {
                 continue;
             }
 
-            // If the appointment already exists, skip it
             if (existingAppointments.length === 0) {
                 const { error: insertError } = await supabase
-                    .from(table) // Access the correct table
+                    .from(table)
                     .insert([{
                         date: appointment.date,
                         time: appointment.time,
-                        available: true // Marking appointment as available
+                        available: true
                     }]);
 
                 if (insertError) {
@@ -245,8 +206,8 @@ const insertAppointmentsToDb = async (appointments) => {
 /* Main function to insert appointments into all tables */
 export async function POST(req) {
     try {
-        const appointments = generateDatesAndTimes(7, 9, 21, 30); // Create appointments for the week with 30 min intervals
-        await insertAppointmentsToDb(appointments); // Insert appointments into all tables
+        const appointments = generateDatesAndTimes(21, 9, 21, 30); // Generate for 3 weeks ahead
+        await insertAppointmentsToDb(appointments);
         return new Response('Appointments generated and inserted successfully.', { status: 200 });
     } catch (error) {
         return new Response('Error generating appointments: ' + error.message, { status: 500 });
