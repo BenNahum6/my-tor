@@ -108,26 +108,22 @@
 
 import { supabase } from '../../lib/supabase';
 
-/* Creating dates and times */
+/* יצירת תאריכים ושעות */
 const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) => {
     const appointments = [];
     const now = new Date();
 
-    // יצירת תורים מ-0 (היום) ועד בדיוק 3 שבועות קדימה כולל
-    for (let i = 0; i <= daysAhead; i++) {  // שיניתי מ-0 עד 21 **כולל**
+    for (let i = 0; i <= daysAhead; i++) {  // לוודא ש-21 כלול
         const day = new Date(now);
         day.setDate(now.getDate() + i);
 
-        // דילוג על שבתות (6)
-        if (day.getDay() === 6) continue;
+        if (day.getDay() === 6) continue; // לדלג על שבתות
 
-        // שישי מסתיים ב-14:30
         let endTime = endHour;
         if (day.getDay() === 5) {
-            endTime = 14.5;
+            endTime = 14.5; // יום שישי מסתיים ב-14:30
         }
 
-        // יצירת תורים לכל יום
         for (let hour = startHour; hour < endTime; hour++) {
             for (let minute = 0; minute < 60; minute += intervalMinutes) {
                 const time = new Date(day);
@@ -136,11 +132,11 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
 
                 const hours = time.getHours().toString().padStart(2, '0');
                 const minutes = time.getMinutes().toString().padStart(2, '0');
-                const timeString = `${hours}:${minutes}:00+02`; // זמן ישראל
+                const timeString = `${hours}:${minutes}:00+02`;
 
                 appointments.push({
-                    date: time.toISOString().split('T')[0], // תאריך בפורמט ISO
-                    time: timeString, // שמירת השעה בפורמט מתאים
+                    date: time.toISOString().split('T')[0],
+                    time: timeString,
                 });
             }
         }
@@ -149,12 +145,11 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
     return appointments;
 };
 
-/* Insert appointments into all tables */
+/* הוספת תורים לטבלאות */
 const insertAppointmentsToDb = async (appointments) => {
-    const tables = ['Ben Nahum']; // רשימת טבלאות
+    const tables = ['Ben Nahum'];
 
     for (let table of tables) {
-        // מחיקה של תורים שעברו 28 יום מהיום
         const deleteThreshold = new Date();
         deleteThreshold.setDate(deleteThreshold.getDate() - 28);
         const formattedThreshold = deleteThreshold.toISOString().split('T')[0];
@@ -162,14 +157,13 @@ const insertAppointmentsToDb = async (appointments) => {
         const { error: deleteError } = await supabase
             .from(table)
             .delete()
-            .lt('date', formattedThreshold); // מוחק רק תורים ישנים מ-28 יום
+            .lt('date', formattedThreshold);
 
         if (deleteError) {
             console.error(`Error deleting appointments from ${table}:`, deleteError.message);
             continue;
         }
 
-        // הכנסת תורים חדשים רק אם הם לא קיימים כבר
         for (const appointment of appointments) {
             const { data: existingAppointments, error: selectError } = await supabase
                 .from(table)
@@ -201,14 +195,15 @@ const insertAppointmentsToDb = async (appointments) => {
     }
 };
 
-/* Main function to insert appointments into all tables */
+/* פונקציה ראשית להוספת תורים */
 export async function POST(req) {
     try {
-        const appointments = generateDatesAndTimes(21, 9, 21, 30); // שלושה שבועות בדיוק כולל היום ה-21
+        const appointments = generateDatesAndTimes(21, 9, 21, 30);
         await insertAppointmentsToDb(appointments);
         return new Response('Appointments generated and inserted successfully.', { status: 200 });
     } catch (error) {
         return new Response('Error generating appointments: ' + error.message, { status: 500 });
     }
 }
+
 
