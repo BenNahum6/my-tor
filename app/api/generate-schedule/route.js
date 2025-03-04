@@ -108,20 +108,20 @@
 
 import { supabase } from '../../lib/supabase';
 
-/* יצירת תאריכים ושעות */
+/* Creating dates and times */
 const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) => {
     const appointments = [];
     const now = new Date();
 
-    for (let i = 0; i <= daysAhead; i++) {  // לוודא ש-21 כלול
+    for (let i = 0; i <= daysAhead; i++) {
         const day = new Date(now);
         day.setDate(now.getDate() + i);
 
-        if (day.getDay() === 6) continue; // לדלג על שבתות
+        if (day.getDay() === 6) continue; // Skip Saturdays
 
         let endTime = endHour;
         if (day.getDay() === 5) {
-            endTime = 14.5; // יום שישי מסתיים ב-14:30
+            endTime = 14.5; // Friday ends 14:30
         }
 
         for (let hour = startHour; hour < endTime; hour++) {
@@ -145,7 +145,7 @@ const generateDatesAndTimes = (daysAhead, startHour, endHour, intervalMinutes) =
     return appointments;
 };
 
-/* הוספת תורים לטבלאות */
+/* Insert appointments into all tables */
 const insertAppointmentsToDb = async (appointments) => {
     const tables = ['Ben Nahum'];
 
@@ -195,7 +195,7 @@ const insertAppointmentsToDb = async (appointments) => {
     }
 };
 
-/* פונקציה ראשית להוספת תורים */
+/* Main function to insert appointments into all tables */
 export async function POST(req) {
     try {
         const appointments = generateDatesAndTimes(21, 9, 21, 30);
